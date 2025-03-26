@@ -28,13 +28,40 @@ graph TD
     B4 --> E3[Production Logging]
 ```
 
-## Updated Dependencies
+## Package Dependencies
+
+### Runtime Dependencies
 | Package | Purpose |
 |---------|---------|
-| Sequelize | PostgreSQL ORM |
+| bcryptjs | Password hashing |
+| compression | Response compression middleware |
+| cookie-parser | Cookie parsing middleware |
+| cors | Cross-Origin Resource Sharing middleware |
+| dotenv | Environment variable loader |
+| express | Web application framework |
+| express-rate-limit | Request rate limiting |
+| express-validator | Request validation middleware |
+| helmet | Security HTTP headers |
+| http-status-codes | HTTP status code constants |
+| jsonwebtoken | JWT implementation |
+| morgan | HTTP request logger |
+| passport | Authentication middleware |
+| passport-jwt | JWT strategy for Passport |
 | pg | PostgreSQL client |
-| jest | Test framework |
-| supertest | HTTP assertions |
+| pg-hstore | PostgreSQL hstore support |
+| sequelize | PostgreSQL ORM |
+| validator | String validation library |
+| winston | Logging library |
+| winston-daily-rotate-file | Rotating file transport for Winston |
+
+### Development Dependencies
+| Package | Purpose |
+|---------|---------|
+| cross-env | Cross-platform environment variables |
+| jest | Testing framework |
+| nodemon | Development server reloading |
+| sequelize-cli | Sequelize CLI tools |
+| supertest | HTTP assertion testing |
 
 ## Testing Strategy
 - 100% endpoint coverage
