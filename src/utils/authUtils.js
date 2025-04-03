@@ -1,41 +1,37 @@
 const jwt = require('jsonwebtoken');
-const config = require('../config');
 
-const signToken = (id) => {
-  return jwt.sign({ id }, config.jwt.secret, {
-    expiresIn: config.jwt.expiresIn
-  });
+exports.signToken = (userId) => {
+  return jwt.sign(
+    { userId },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
 };
 
-const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
+exports.createSendToken = (user, statusCode, res) => {
+  const token = this.signToken(user.userId);
+
+  // Remove sensitive data
+  const userResponse = user.get();
+  delete userResponse.passwordHash;
+  delete userResponse.verificationToken;
+
   const cookieOptions = {
-    expires: new Date(
-      Date.now() + config.jwt.cookieExpiresIn * 24 * 60 * 60 * 1000
-    ),
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production'
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
   };
 
   res.cookie('jwt', token, cookieOptions);
 
-  user.password = undefined;
-
   res.status(statusCode).json({
     status: 'success',
     token,
-    data: {
-      user
-    }
+    data: { user: userResponse }
   });
 };
 
-const verifyToken = async (token) => {
-  return await jwt.verify(token, config.jwt.secret);
-};
-
-module.exports = {
-  signToken,
-  createSendToken,
-  verifyToken
+exports.verifyToken = async (token) => {
+  return jwt.verify(token, process.env.JWT_SECRET);
 };
