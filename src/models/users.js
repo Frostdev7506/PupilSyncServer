@@ -31,8 +31,9 @@ module.exports = function(sequelize, DataTypes) {
       field: 'last_name'
     },
     role: {
-      type: DataTypes.ENUM("student","teacher","admin","parent"),
-      allowNull: false
+      type: DataTypes.ENUM("student", "teacher", "admin", "parent", "institution"),
+      allowNull: false,
+      comment: "User role determines access level and associated profile type"
     },
     isVerified: {
       type: DataTypes.BOOLEAN,
@@ -94,4 +95,6 @@ module.exports = function(sequelize, DataTypes) {
 
   return Users;
 };
+
+
 
