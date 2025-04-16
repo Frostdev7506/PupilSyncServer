@@ -1,8 +1,6 @@
 const Sequelize = require('sequelize');
-const bcrypt = require('bcryptjs');
-
 module.exports = function(sequelize, DataTypes) {
-  const Users = sequelize.define('Users', {
+  return sequelize.define('Users', {
     userId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -32,8 +30,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     role: {
       type: DataTypes.ENUM("student", "teacher", "admin", "parent", "institution"),
-      allowNull: false,
-      comment: "User role determines access level and associated profile type"
+      allowNull: false
     },
     isVerified: {
       type: DataTypes.BOOLEAN,
@@ -61,40 +58,24 @@ module.exports = function(sequelize, DataTypes) {
     indexes: [
       {
         name: "idx_users_email",
-        fields: [{ name: "email" }]
+        fields: [
+          { name: "email" },
+        ]
       },
       {
         name: "users_email_key",
         unique: true,
-        fields: [{ name: "email" }]
+        fields: [
+          { name: "email" },
+        ]
       },
       {
         name: "users_pkey",
         unique: true,
-        fields: [{ name: "user_id" }]
-      }
+        fields: [
+          { name: "user_id" },
+        ]
+      },
     ]
   });
-
-  // Instance methods
-  Users.prototype.correctPassword = async function(candidatePassword) {
-    return await bcrypt.compare(candidatePassword, this.password_hash);
-  };
-
-  Users.prototype.setPassword = async function(password) {
-    this.password_hash = await bcrypt.hash(password, 12);
-  };
-
-  Users.prototype.changedPasswordAfter = function(JWTTimestamp) {
-    if (this.updatedAt) {
-      const changedTimestamp = parseInt(this.updatedAt.getTime() / 1000, 10);
-      return JWTTimestamp < changedTimestamp;
-    }
-    return false;
-  };
-
-  return Users;
 };
-
-
-

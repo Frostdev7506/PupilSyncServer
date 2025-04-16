@@ -9,10 +9,10 @@ exports.signToken = (userId) => {
 };
 
 exports.createSendToken = (user, statusCode, res) => {
-  const token = this.signToken(user.userId);
+  const token = exports.signToken(user.userId);
 
-  // Remove sensitive data
-  const userResponse = user.get();
+  // Safely get a plain object from user
+  const userResponse = user && typeof user.get === 'function' ? user.get() : { ...user };
   delete userResponse.passwordHash;
   delete userResponse.verificationToken;
 
