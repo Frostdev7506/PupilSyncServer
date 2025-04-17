@@ -18,15 +18,6 @@ module.exports = function(sequelize, DataTypes) {
       unique: "teachers_user_id_key",
       field: 'user_id'
     },
-    institutionId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'institutions',
-        key: 'institution_id'
-      },
-      field: 'institution_id'
-    },
     subjectExpertise: {
       type: DataTypes.TEXT,
       allowNull: true,

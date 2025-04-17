@@ -1,7 +1,7 @@
 const authService = require('../services/authService');
 const { createSendToken } = require('../utils/authUtils');
 const AppError = require('../utils/errors/AppError');
-const catchAsync = require('../utils/errors/catchAsync');
+// const catchAsync = require('../utils/errors/catchAsync');
 // Removed: const { generateToken } = require('../utils/authUtils');
 
 exports.signup = async (req, res, next) => {
@@ -80,5 +80,48 @@ exports.registerInstitution = async (req, res, next) => {
     });
   } catch (err) {
     next(new AppError(err.message, 400));
+  }
+};
+
+// Add controller for registering a student
+exports.registerStudent = async (req, res, next) => {
+  try {
+    // Basic validation (add more as needed)
+    const { email, password, firstName, lastName } = req.body;
+    if (!email || !password || !firstName || !lastName) {
+      return next(new AppError('Please provide email, password, first name, and last name', 400));
+    }
+
+    const { user, student } = await authService.registerStudent(req.body);
+
+    // Use createSendToken, passing student data
+    createSendToken(user, 201, res, { student });
+
+  } catch (err) {
+    // Use the error handling from the service or a generic one
+    next(err instanceof AppError ? err : new AppError(err.message, 400));
+  }
+};
+
+// Add controller for registering a teacher
+exports.registerTeacher = async (req, res, next) => {
+  try {
+    // Basic validation (add more as needed)
+    const { email, password, firstName, lastName } = req.body;
+    console.log(req.body,"req.body----------");
+    
+    if (!email || !password || !firstName || !lastName) {
+      return next(new AppError('Please provide email, password, first name, and last name', 400));
+    }
+
+    const { user, teacher } = await authService.registerTeacher(req.body);
+
+    // Use createSendToken, passing teacher data
+    createSendToken(user, 201, res, { teacher });
+
+  } catch (err) {
+    // Pass the original error to the global error handler
+    // It will classify it as operational (AppError) or programming error
+    next(err);
   }
 };

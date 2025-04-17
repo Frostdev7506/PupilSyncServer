@@ -11,37 +11,9 @@ const initModels = require('../models/init-models');
 // 3. Call initModels to get the models object
 const models = initModels(sequelize);
 // 4. Destructure the specific models you need
-const { Users, Institutions } = models;
+const { Users, Institutions, Students, Teachers } = models;
 
-exports.createUser = async (userData) => {
-  try {
-    // Set default role if not provided
-    if (!userData.role) {
-      userData.role = 'user';
-    }
 
-    // Handle password separately
-    const password = userData.password;
-    delete userData.password;
-
-    // Use the imported variable 'Users' (plural)
-    const user = await Users.create(userData); // Should work now
-
-    // Set password using the method that will hash it
-    if (password) {
-      // Assuming setPassword exists on the Users model instance
-      await user.setPassword(password);
-      await user.save();
-    }
-
-    return user;
-  } catch (err) {
-    if (err.name === 'SequelizeUniqueConstraintError') {
-      throw new Error('User already exists with this email');
-    }
-    throw new Error(`Error creating user: ${err.message}`);
-  }
-};
 
 exports.loginUser = async (email, password) => {
   // Ensure this uses 'Users' correctly
@@ -139,5 +111,113 @@ exports.registerInstitution = async (institutionData) => {
     }
     // Throw a generic server error for other issues
     throw new AppError(`Error registering institution: ${err.message || 'Internal Server Error'}`, 500);
+  }
+};
+
+exports.registerStudent = async (studentData) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    const password = studentData.password;
+    if (!password) {
+      throw new AppError('Password is required for registration.', 400);
+    }
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const userData = {
+      email: studentData.email,
+      passwordHash,
+      firstName: studentData.firstName,
+      lastName: studentData.lastName,
+      role: 'student',
+      isVerified: false
+    };
+
+    const user = await Users.create(userData, { transaction });
+
+    const userPlain = user && typeof user.toJSON === 'function' ? user.toJSON() : user;
+    const studentDetails = {
+      userId: userPlain.userId,
+      institutionId: studentData.institutionId,
+      gradeLevel: studentData.gradeLevel
+    };
+
+    const student = await Students.create(studentDetails, { transaction });
+
+    await transaction.commit();
+
+    let userResponse = userPlain;
+    delete userResponse.passwordHash;
+
+    return { user: userResponse, student };
+  } catch (err) {
+    await transaction.rollback();
+    console.error("Error during student registration:", err);
+
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+      const messages = err.errors ? err.errors.map(e => e.message).join(', ') : err.message;
+      throw new AppError(`Validation Error: ${messages}`, 400);
+    }
+    throw new AppError(`Error registering student: ${err.message || 'Internal Server Error'}`, 500);
+  }
+};
+
+exports.registerTeacher = async (teacherData) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    const password = teacherData.password;
+    if (!password) {
+      throw new AppError('Password is required for registration.', 400);
+    }
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const userData = {
+      email: teacherData.email,
+      passwordHash,
+      firstName: teacherData.firstName,
+      lastName: teacherData.lastName,
+      role: 'teacher',
+      isVerified: false
+    };
+
+    const user = await Users.create(userData, { transaction });
+
+    const userPlain = user && typeof user.toJSON === 'function' ? user.toJSON() : user;
+    const teacherDetails = {
+      userId: userPlain.userId,
+      subjectExpertise: teacherData.subjectExpertise,
+      bio: teacherData.bio,
+      profilePictureUrl: teacherData.profilePictureUrl
+    };
+
+    const teacher = await Teachers.create(teacherDetails, { transaction });
+
+    // Handle institution relationships
+    if (teacherData.institutions && teacherData.institutions.length > 0) {
+      const teacherInstitutions = teacherData.institutions.map((institutionId, index) => ({
+        teacherId: teacher.teacherId,
+        institutionId,
+        isPrimary: index === 0 // First institution is set as primary
+      }));
+
+      await models.TeacherInstitutions.bulkCreate(teacherInstitutions, { transaction });
+    }
+
+    await transaction.commit();
+
+    let userResponse = userPlain;
+    delete userResponse.passwordHash;
+
+    return { user: userResponse, teacher };
+  } catch (err) {
+    await transaction.rollback();
+    console.error("Error during teacher registration:", err);
+
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+      const messages = err.errors ? err.errors.map(e => e.message).join(', ') : err.message;
+      throw new AppError(`Validation Error: ${messages}`, 400);
+    }
+    throw new AppError(`Error registering teacher: ${err.message || 'Internal Server Error'}`, 500);
   }
 };

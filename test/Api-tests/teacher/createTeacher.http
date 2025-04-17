@@ -1,0 +1,38 @@
+### Register a new Teacher User and Teacher Record with Multiple Institutions
+POST http://localhost:3000/api/v1/auth/register-teacher
+Content-Type: application/json
+
+{
+  "email": "teacher.alice.jones@example.com",
+  "password": "teacherPassword456&",
+  "firstName": "Alice",
+  "lastName": "Jones",
+  "subjectExpertise": "Mathematics, Physics",
+  "bio": "Experienced math and physics teacher.",
+  "profilePictureUrl": "http://example.com/profiles/alice.jpg",
+  "institutionIds": [1, 2],
+  "primaryInstitutionId": 1
+}
+
+### Register another teacher (minimal data with single institution)
+POST http://localhost:3000/api/v1/auth/register-teacher
+Content-Type: application/json
+
+{
+  "email": "teacher.bob.williams@example.com",
+  "password": "bobTeacherPass789*",
+  "firstName": "Bob",
+  "lastName": "Williams",
+  "institutionIds": [3]
+}
+
+### Register a teacher without institution (should still work)
+POST http://localhost:3000/api/v1/auth/register-teacher
+Content-Type: application/json
+
+{
+  "email": "teacher.carol.brown@example.com",
+  "password": "carolPass123#",
+  "firstName": "Carol",
+  "lastName": "Brown"
+}

@@ -18,7 +18,10 @@ var _StudentQuizResponses = require("./studentQuizResponses");
 var _Students = require("./students");
 var _Submissions = require("./submissions");
 var _Teachers = require("./teachers");
+var _TeacherInstitutions = require("./teacherInstitutions");
 var _Users = require("./users");
+var _Classes = require("./classes");
+var _ClassEnrollments = require("./classEnrollments");
 
 function initModels(sequelize) {
   var Admins = _Admins(sequelize, DataTypes);
@@ -40,7 +43,10 @@ function initModels(sequelize) {
   var Students = _Students(sequelize, DataTypes);
   var Submissions = _Submissions(sequelize, DataTypes);
   var Teachers = _Teachers(sequelize, DataTypes);
+  var TeacherInstitutions = _TeacherInstitutions(sequelize, DataTypes);
   var Users = _Users(sequelize, DataTypes);
+  var Classes = _Classes(sequelize, DataTypes);
+  var ClassEnrollments = _ClassEnrollments(sequelize, DataTypes);
 
   Parents.belongsToMany(Students, { as: 'studentIdStudents', through: ParentStudentLink, foreignKey: "parentId", otherKey: "studentId" });
   Students.belongsToMany(Parents, { as: 'parentIdParents', through: ParentStudentLink, foreignKey: "studentId", otherKey: "parentId" });
@@ -60,8 +66,25 @@ function initModels(sequelize) {
   Institutions.hasMany(Courses, { as: "courses", foreignKey: "institutionId"});
   Students.belongsTo(Institutions, { as: "institution", foreignKey: "institutionId"});
   Institutions.hasMany(Students, { as: "students", foreignKey: "institutionId"});
-  Teachers.belongsTo(Institutions, { as: "institution", foreignKey: "institutionId"});
-  Institutions.hasMany(Teachers, { as: "teachers", foreignKey: "institutionId"});
+  // Many-to-Many relationship between Teachers and Institutions
+  Teachers.belongsToMany(Institutions, {
+    through: TeacherInstitutions,
+    as: 'institutions',
+    foreignKey: 'teacherId',
+    otherKey: 'institutionId'
+  });
+  Institutions.belongsToMany(Teachers, {
+    through: TeacherInstitutions,
+    as: 'teachers',
+    foreignKey: 'institutionId',
+    otherKey: 'teacherId'
+  });
+
+  // Direct associations with the junction table
+  TeacherInstitutions.belongsTo(Teachers, { as: 'teacher', foreignKey: 'teacherId' });
+  Teachers.hasMany(TeacherInstitutions, { as: 'teacherInstitutions', foreignKey: 'teacherId' });
+  TeacherInstitutions.belongsTo(Institutions, { as: 'institution', foreignKey: 'institutionId' });
+  Institutions.hasMany(TeacherInstitutions, { as: 'teacherInstitutions', foreignKey: 'institutionId' });
   Assignments.belongsTo(Lessons, { as: "lesson", foreignKey: "lessonId"});
   Lessons.hasMany(Assignments, { as: "assignments", foreignKey: "lessonId"});
   ContentBlocks.belongsTo(Lessons, { as: "lesson", foreignKey: "lessonId"});
@@ -130,6 +153,9 @@ function initModels(sequelize) {
     Submissions,
     Teachers,
     Users,
+    TeacherInstitutions,
+    Classes,
+    ClassEnrollments
   };
 }
 module.exports = initModels;
