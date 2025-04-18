@@ -3,12 +3,14 @@ POST http://localhost:3000/api/v1/auth/register-student
 Content-Type: application/json
 
 {
-  "email": "student.john.doe@example.com",
-  "password": "studentPassword123!",
-  "firstName": "John",
-  "lastName": "Doe",
-  "institutionId": 1, // Optional: Replace with a valid institution ID if needed
-  "gradeLevel": "10th Grade" // Optional
+"email": "student3.test@example.com",
+    "password": "Test226@123",
+    "firstName": "John",
+    "lastName": "Doe",
+    "institutionId":7,
+    "gradeLevel": "10",
+    "classIds": [1, 2, 3],
+    "quizIds": [1, 2]
 }
 
 ### Register another student (minimal data)

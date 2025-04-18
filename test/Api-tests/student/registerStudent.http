@@ -1,0 +1,66 @@
+@baseUrl = http://localhost:3000/api/v1
+
+### Test Case 1: Complete Student Registration with Class Enrollments and Quiz Attempts
+POST {{baseUrl}}/register-student
+Content-Type: application/json
+
+{
+    "email": "student.test@example.com",
+    "password": "Test@123",
+    "firstName": "John",
+    "lastName": "Doe",
+    "institutionId": 1,
+    "gradeLevel": "10",
+    "classIds": [1, 2, 3],
+    "quizIds": [1, 2]
+}
+
+### Test Case 2: Minimal Student Registration (Required Fields Only)
+POST {{baseUrl}}/auth/register/student
+Content-Type: application/json
+
+{
+    "email": "minimal.student@example.com",
+    "password": "Test@123",
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "institutionId": 1,
+    "gradeLevel": "9"
+}
+
+### Test Case 3: Error - Missing Required Password
+POST {{baseUrl}}/auth/register/student
+Content-Type: application/json
+
+{
+    "email": "error.student@example.com",
+    "firstName": "Error",
+    "lastName": "Test",
+    "institutionId": 1,
+    "gradeLevel": "11"
+}
+
+### Test Case 4: Error - Invalid Email Format
+POST {{baseUrl}}/auth/register/student
+Content-Type: application/json
+
+{
+    "email": "invalid.email",
+    "password": "Test@123",
+    "firstName": "Invalid",
+    "lastName": "Email",
+    "institutionId": 1,
+    "gradeLevel": "12"
+}
+### Test Case 5: Student Registration with Invalid Institution ID
+POST {{baseUrl}}/auth/register/student
+Content-Type: application/json
+
+{
+    "email": "invalid.institution@example.com",
+    "password": "Test@123",
+    "firstName": "Invalid",
+    "lastName": "Institution",
+    "institutionId": 999,
+    "gradeLevel": "10"
+}

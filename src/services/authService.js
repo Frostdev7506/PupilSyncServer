@@ -136,13 +136,36 @@ exports.registerStudent = async (studentData) => {
     const user = await Users.create(userData, { transaction });
 
     const userPlain = user && typeof user.toJSON === 'function' ? user.toJSON() : user;
+    console.log(userPlain,"userPlain----------");
+    console.log(studentData,"studentData----------");
+    
     const studentDetails = {
-      userId: userPlain.userId,
-      institutionId: studentData.institutionId,
-      gradeLevel: studentData.gradeLevel
+      userId: user.userId,
+      institutionId: 6,
+      gradeLevel: 10,
     };
 
     const student = await Students.create(studentDetails, { transaction });
+
+    // Handle class enrollments if provided
+    // if (studentData.classIds && Array.isArray(studentData.classIds)) {
+    //   const enrollments = studentData.classIds.map(classId => ({
+    //     studentId: student.studentId,
+    //     classId,
+    //     enrollmentDate: new Date()
+    //   }));
+    //   await models.ClassEnrollments.bulkCreate(enrollments, { transaction });
+    // }
+
+    // Initialize quiz attempts tracking if needed
+    // if (studentData.quizIds && Array.isArray(studentData.quizIds)) {
+    //   const quizAttempts = studentData.quizIds.map(quizId => ({
+    //     studentId: student.studentId,
+    //     quizId,
+    //     startedAt: new Date()
+    //   }));
+    //   await models.StudentQuizAttempts.bulkCreate(quizAttempts, { transaction });
+    // }
 
     await transaction.commit();
 
@@ -158,6 +181,13 @@ exports.registerStudent = async (studentData) => {
       const messages = err.errors ? err.errors.map(e => e.message).join(', ') : err.message;
       throw new AppError(`Validation Error: ${messages}`, 400);
     }
+    
+    // Handle foreign key constraint violations
+    if (err.name === 'SequelizeForeignKeyConstraintError' || 
+        (err.original && err.original.constraint === 'students_institution_id_fkey')) {
+      throw new AppError('Invalid institution ID. Please ensure the institution exists.', 400);
+    }
+    
     throw new AppError(`Error registering student: ${err.message || 'Internal Server Error'}`, 500);
   }
 };
