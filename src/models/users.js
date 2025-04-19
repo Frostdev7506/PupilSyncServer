@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Users', {
+  const Users = sequelize.define('Users', {
     userId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -32,6 +32,13 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.ENUM("student", "teacher", "admin", "parent", "institution"),
       allowNull: false
     },
+    pupilsyncId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      unique: true,
+      defaultValue: Sequelize.UUIDV4,
+      field: 'pupilsync_id'
+    },
     isVerified: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
@@ -47,6 +54,15 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true,
       field: 'last_login'
+    },
+    institutionId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'institutions',
+        key: 'institution_id'
+      },
+      field: 'institution_id'
     }
   }, {
     sequelize,
@@ -76,6 +92,8 @@ module.exports = function(sequelize, DataTypes) {
           { name: "user_id" },
         ]
       },
-    ]
+    ],
+    
   });
+  return Users;
 };

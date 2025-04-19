@@ -82,6 +82,7 @@ exports.registerInstitution = async (institutionData) => {
       name: institutionData.name,
       address: institutionData.address,
       contactEmail: institutionData.contactEmail || institutionData.email,
+      institutionId: userPlain.institutionId // Ensure institutionId is correctly referenced
     };
 
     const institution = await Institutions.create(institutionDetails, { transaction });

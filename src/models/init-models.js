@@ -73,7 +73,8 @@ function initModels(sequelize) {
     foreignKey: 'teacherId',
     otherKey: 'institutionId'
   });
-  Institutions.belongsToMany(Teachers, {
+  Institutions.belongsTo(Users, { as: 'user', foreignKey: 'userId' });
+Institutions.belongsToMany(Teachers, {
     through: TeacherInstitutions,
     as: 'teachers',
     foreignKey: 'institutionId',

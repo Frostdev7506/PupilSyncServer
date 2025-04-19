@@ -8,8 +8,24 @@ exports.signToken = (userId) => {
   );
 };
 
+
+exports.signTokenUser = (user) => {
+  return jwt.sign(
+    {
+      pupilsyncId: user.pupilsyncId,
+      userId: user.userId,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      isVerified: user.isVerified
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
+};
 exports.createSendToken = (user, statusCode, res) => {
-  const token = exports.signToken(user.userId);
+  const token = exports.signTokenUser(user);
 
   // Safely get a plain object from user
   const userResponse = user && typeof user.get === 'function' ? user.get() : { ...user };

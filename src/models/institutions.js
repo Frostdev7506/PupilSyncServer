@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Institutions', {
+  const Institutions = sequelize.define('Institutions', {
     institutionId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -21,6 +21,15 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       unique: "institutions_contact_email_key",
       field: 'contact_email'
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'user_id'
+      },
+      field: 'user_id'
     }
   }, {
     sequelize,
@@ -28,6 +37,12 @@ module.exports = function(sequelize, DataTypes) {
     schema: 'public',
     timestamps: true,
     paranoid: true,
+    associate: function(models) {
+      Institutions.hasOne(models.Users, {
+        foreignKey: 'institutionId',
+        as: 'user'
+      });
+    },
     indexes: [
       {
         name: "institutions_contact_email_key",
@@ -45,4 +60,5 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+  return Institutions;
 };

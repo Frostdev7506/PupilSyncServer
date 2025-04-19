@@ -1,0 +1,11 @@
+### Get Institution Details with Valid ID
+GET http://localhost:3000/api/v1/institutions/46
+Content-Type: application/json
+
+### Get Institution Details with Invalid ID
+GET http://localhost:3000/api/v1/institutions/999
+Content-Type: application/json
+
+### Get Institution Details with Invalid Format ID
+GET http://localhost:3000/api/v1/institutions/invalid-id
+Content-Type: application/json
