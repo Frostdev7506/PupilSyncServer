@@ -38,8 +38,8 @@ module.exports = function(sequelize, DataTypes) {
     timestamps: true,
     paranoid: true,
     associate: function(models) {
-      Institutions.hasOne(models.Users, {
-        foreignKey: 'institutionId',
+      Institutions.belongsTo(models.Users, {
+        foreignKey: 'userId',
         as: 'user'
       });
     },

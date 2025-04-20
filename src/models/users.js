@@ -54,15 +54,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true,
       field: 'last_login'
-    },
-    institutionId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'institutions',
-        key: 'institution_id'
-      },
-      field: 'institution_id'
     }
   }, {
     sequelize,

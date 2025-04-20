@@ -15,7 +15,19 @@ const app = express();
 connectDB(); // Actually connect to the database
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
+  xContentTypeOptions: true,
+  xFrameOptions: { action: 'deny' },
+  hsts: { maxAge: 15552000, includeSubDomains: true },
+}));
 app.use(cors({
   origin: config.cors.origin,
   credentials: true

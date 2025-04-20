@@ -66,26 +66,28 @@ function initModels(sequelize) {
   Institutions.hasMany(Courses, { as: "courses", foreignKey: "institutionId"});
   Students.belongsTo(Institutions, { as: "institution", foreignKey: "institutionId"});
   Institutions.hasMany(Students, { as: "students", foreignKey: "institutionId"});
-  // Many-to-Many relationship between Teachers and Institutions
   Teachers.belongsToMany(Institutions, {
     through: TeacherInstitutions,
     as: 'institutions',
     foreignKey: 'teacherId',
     otherKey: 'institutionId'
   });
-  Institutions.belongsTo(Users, { as: 'user', foreignKey: 'userId' });
-Institutions.belongsToMany(Teachers, {
+  Institutions.belongsToMany(Teachers, {
     through: TeacherInstitutions,
-    as: 'teachers',
+    as: 'associatedInstitutions',
     foreignKey: 'institutionId',
     otherKey: 'teacherId'
   });
+  // TeacherInstitutions.belongsTo(Institutions, { as: 'institution', foreignKey: 'institutionId' });
+  Institutions.hasMany(TeacherInstitutions, { as: 'teacherInstitutions', foreignKey: 'institutionId' });
+  Institutions.belongsTo(Users, { as: 'user', foreignKey: 'userId' });
+
 
   // Direct associations with the junction table
   TeacherInstitutions.belongsTo(Teachers, { as: 'teacher', foreignKey: 'teacherId' });
-  Teachers.hasMany(TeacherInstitutions, { as: 'teacherInstitutions', foreignKey: 'teacherId' });
+  // Teachers.hasMany(TeacherInstitutions, { as: 'teacherInstitutions', foreignKey: 'teacherId' });
   TeacherInstitutions.belongsTo(Institutions, { as: 'institution', foreignKey: 'institutionId' });
-  Institutions.hasMany(TeacherInstitutions, { as: 'teacherInstitutions', foreignKey: 'institutionId' });
+  // Institutions.hasMany(TeacherInstitutions, { as: 'teacherInstitutions', foreignKey: 'institutionId' });
   Assignments.belongsTo(Lessons, { as: "lesson", foreignKey: "lessonId"});
   Lessons.hasMany(Assignments, { as: "assignments", foreignKey: "lessonId"});
   ContentBlocks.belongsTo(Lessons, { as: "lesson", foreignKey: "lessonId"});
