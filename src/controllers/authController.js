@@ -4,6 +4,33 @@ const AppError = require('../utils/errors/AppError');
 // const catchAsync = require('../utils/errors/catchAsync');
 // Removed: const { generateToken } = require('../utils/authUtils');
 
+/**
+ * @swagger
+ * /signup:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       400:
+ *         description: Bad request
+ */
 exports.signup = async (req, res, next) => {
   try {
     const user = await authService.createUser(req.body);

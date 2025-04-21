@@ -1,7 +1,9 @@
 const express = require('express');
-
-const helmet = require('helmet');
 const cors = require('cors');
+const helmet = require('helmet');
+const swaggerUI = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerConfig = require('./config/swagger-config');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const config = require('./config');
@@ -40,6 +42,10 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === 'development') {
   app.use(require('morgan')('dev'));
 }
+
+// Swagger Documentation
+const specs = swaggerJSDoc(swaggerConfig);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 
 // Routes
 app.use('/api/v1', require('./routes/v1'));

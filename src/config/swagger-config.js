@@ -9,7 +9,7 @@ module.exports = {
       description: 'API documentation for PupilSync education platform',
       contact: {
         name: 'API Support',
-        email: 'support@pupilsync.com'
+        email: 'neerajbutola8910@gmail.com'
       },
       license: {
         name: 'MIT',
