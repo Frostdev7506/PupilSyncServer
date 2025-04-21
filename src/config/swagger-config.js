@@ -36,7 +36,7 @@ module.exports = {
     }]
   },
   apis: [
-    path.resolve(__dirname, '../routes/**/*.js'),
-    path.resolve(__dirname, '../models/*.js')
+    path.resolve(__dirname, '../controllers/**/*.js'),
+    path.resolve(__dirname, '../routes/**/*.js')
   ]
 };

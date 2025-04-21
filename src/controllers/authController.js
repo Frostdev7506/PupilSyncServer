@@ -67,6 +67,61 @@ exports.refreshToken = async (req, res, next) => {
   }
 };
 
+/**
+ * @swagger
+ * /registerInstitution:
+ *   post:
+ *     summary: Register a new institution
+ *     tags: [Institution]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               contactEmail:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Institution registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 institution:
+ *                   type: object
+ *                   properties:
+ *                     institutionId:
+ *                       type: integer
+ *                     userId:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                     address:
+ *                       type: string
+ *                     contactEmail:
+ *                       type: string
+ *       400:
+ *         description: Bad request
+ */
+
+
 // Define and export the registerInstitution controller function
 exports.registerInstitution = async (req, res, next) => {
   // Extract data from request body
