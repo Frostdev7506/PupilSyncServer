@@ -14,13 +14,27 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.p
 });
 
 const connectDB = async () => {
-  try {
-    await sequelize.authenticate();
-    await sequelize.sync();
-    logger.info('PostgreSQL connection established');
-  } catch (err) {
-    logger.error(`PostgreSQL connection error: ${err.message}`);
-    process.exit(1);
+  const maxRetries = 5;
+  const initialRetryDelay = 5000; // 5 seconds
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await sequelize.authenticate();
+      await sequelize.sync();
+      logger.info('PostgreSQL connection established');
+      return;
+    } catch (err) {
+      const retryDelay = initialRetryDelay * Math.pow(2, attempt - 1); // Exponential backoff
+      logger.error(`PostgreSQL connection attempt ${attempt} failed: ${err.message}`);
+      
+      if (attempt === maxRetries) {
+        logger.error('Max connection retries reached. Server will continue running with limited functionality.');
+        return;
+      }
+
+      logger.info(`Retrying in ${retryDelay/1000} seconds...`);
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
+    }
   }
 };
 

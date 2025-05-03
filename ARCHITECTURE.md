@@ -53,6 +53,8 @@ graph TD
 | validator | String validation library |
 | winston | Logging library |
 | winston-daily-rotate-file | Rotating file transport for Winston |
+| swagger-jsdoc             | API documentation generator         |
+| swagger-ui-express        | API documentation UI              |
 
 ### Development Dependencies
 | Package | Purpose |
@@ -62,45 +64,78 @@ graph TD
 | nodemon | Development server reloading |
 | sequelize-cli | Sequelize CLI tools |
 | supertest | HTTP assertion testing |
+| sequelize-auto | Automatic model generation |
 
 ## Core Domain Model
 
-### Key Entities
-- **Users**: Central authentication entity with role-based access
-- **Roles**: Student, Teacher, Admin (Institution), Parent
-- **Institutions**: Schools/coaching centers using the platform
-- **Teachers**: Create/manage courses, can be independent or institution-linked
-- **Students**: Consume content and participate in courses
-- **Parents**: Monitor linked students' progress
-- **Courses**: Primary learning content containers
-- **Enrollments**: Link Students to Courses/Teachers/Institutions
-- **Lessons**: Individual learning units within Courses
-- **Content Blocks**: Modular pieces (Text/Video/Quiz/Assignment) using JSONB
-- **Assignments**: Student tasks with submission requirements
-- **Submissions**: Student work deliverables
-- **Quizzes**: Knowledge assessment tools
-- **Quiz Questions**: Individual test items
-- **Quiz Answers**: Multiple-choice options
-- **Quiz Responses**: Student answer records
-- **Messaging**: User communication system
+### Key Entities (Based on `src/models`)
+- **Users**: Central authentication entity (`users.js`). Roles likely managed within this or related tables.
+- **Admins**: Administrative users (`admins.js`).
+- **Institutions**: Schools/coaching centers (`institutions.js`).
+- **Teachers**: Educators (`teachers.js`).
+- **TeacherInstitutions**: Links Teachers to Institutions (`teacherInstitutions.js`).
+- **Students**: Learners (`students.js`).
+- **Parents**: Guardians (`parents.js`).
+- **ParentStudentLink**: Links Parents to Students (`parentStudentLink.js`).
+- **Courses**: Primary learning content containers (`courses.js`).
+- **Classes**: Specific instances or sections of Courses (`classes.js`).
+- **Enrollments**: Links Students to Courses/Classes (`enrollments.js`).
+- **ClassEnrollments**: Specific enrollment details for Classes (`classEnrollments.js`).
+- **Lessons**: Individual learning units within Courses (`lessons.js`).
+- **Content Blocks**: Modular pieces (Text/Video/Quiz/Assignment) using JSONB (`contentBlocks.js`).
+- **Assignments**: Student tasks (`assignments.js`).
+- **Submissions**: Student work deliverables (`submissions.js`).
+- **Quizzes**: Knowledge assessment tools (`quizzes.js`).
+- **Quiz Questions**: Individual test items (`quizQuestions.js`).
+- **Quiz Answers**: Multiple-choice options (`quizAnswers.js`).
+- **StudentQuizAttempts**: Records of student attempts on quizzes (`studentQuizAttempts.js`).
+- **StudentQuizResponses**: Specific answers provided by students (`studentQuizResponses.js`).
+- **Messages**: User communication system (`messages.js`).
+- **OtpCodes**: One-time password codes for verification (`otpCodes.js`).
 
 ```mermaid
 erDiagram
-    Users ||--o{ Roles : has
-    Users ||--o{ Institutions : "belongs to (Admin)"
-    Teachers }o--|| Institutions : "associated with"
-    Students ||--o{ Parents : "linked to"
-    Courses ||--o{ Lessons : contains
-    Lessons ||--o{ ContentBlocks : comprises
-    Courses ||--o{ Enrollments : manages
-    Students ||--o{ Enrollments : participates-in
+    Users ||--o{ Admins : "can be"
+    Users ||--o{ Teachers : "can be"
+    Users ||--o{ Students : "can be"
+    Users ||--o{ Parents : "can be"
+    Users ||--o{ Messages : "sends/receives"
+    Users ||--o{ OtpCodes : "requests"
+
+    Institutions ||--o{ Admins : "managed by"
+    Institutions ||--o{ TeacherInstitutions : "has"
+    Institutions ||--o{ Courses : "offers"
+
+    Teachers ||--o{ TeacherInstitutions : "belongs to"
     Teachers ||--o{ Courses : "creates/manages"
-    Assignments ||--o{ Submissions : receives
-    Students ||--o{ Submissions : submits
-    Quizzes ||--o{ QuizQuestions : contains
-    QuizQuestions ||--o{ QuizAnswers : offers
-    Students ||--o{ QuizResponses : provides
-    Users ||--o{ Messaging : "participates in"
+    Teachers ||--o{ Classes : "teaches"
+
+    Students ||--o{ ParentStudentLink : "linked via"
+    Students ||--o{ Enrollments : "participates in"
+    Students ||--o{ ClassEnrollments : "enrolled in"
+    Students ||--o{ Submissions : "submits"
+    Students ||--o{ StudentQuizAttempts : "attempts"
+    Students ||--o{ StudentQuizResponses : "provides"
+
+    Parents ||--o{ ParentStudentLink : "linked via"
+
+    Courses ||--o{ Classes : "has instances"
+    Courses ||--o{ Lessons : "contains"
+    Courses ||--o{ Enrollments : "has"
+    Courses ||--o{ Assignments : "includes"
+    Courses ||--o{ Quizzes : "includes"
+
+    Classes ||--o{ ClassEnrollments : "has"
+
+    Lessons ||--o{ ContentBlocks : "comprises"
+
+    Assignments ||--o{ Submissions : "receives"
+
+    Quizzes ||--o{ QuizQuestions : "contains"
+    Quizzes ||--o{ StudentQuizAttempts : "records"
+
+    QuizQuestions ||--o{ QuizAnswers : "offers"
+    QuizQuestions ||--o{ StudentQuizResponses : "answered in"
 ```
 
 ## Testing Strategy

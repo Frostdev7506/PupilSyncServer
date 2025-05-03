@@ -137,36 +137,15 @@ exports.registerStudent = async (studentData) => {
     const user = await Users.create(userData, { transaction });
 
     const userPlain = user && typeof user.toJSON === 'function' ? user.toJSON() : user;
-    console.log(userPlain,"userPlain----------");
-    console.log(studentData,"studentData----------");
     
     const studentDetails = {
       userId: user.userId,
-      institutionId: 6,
-      gradeLevel: 10,
+      institutionId: studentData.institutionId,
+      gradeLevel: studentData.gradeLevel,
     };
 
     const student = await Students.create(studentDetails, { transaction });
 
-    // Handle class enrollments if provided
-    // if (studentData.classIds && Array.isArray(studentData.classIds)) {
-    //   const enrollments = studentData.classIds.map(classId => ({
-    //     studentId: student.studentId,
-    //     classId,
-    //     enrollmentDate: new Date()
-    //   }));
-    //   await models.ClassEnrollments.bulkCreate(enrollments, { transaction });
-    // }
-
-    // Initialize quiz attempts tracking if needed
-    // if (studentData.quizIds && Array.isArray(studentData.quizIds)) {
-    //   const quizAttempts = studentData.quizIds.map(quizId => ({
-    //     studentId: student.studentId,
-    //     quizId,
-    //     startedAt: new Date()
-    //   }));
-    //   await models.StudentQuizAttempts.bulkCreate(quizAttempts, { transaction });
-    // }
 
     await transaction.commit();
 

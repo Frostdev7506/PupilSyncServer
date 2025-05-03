@@ -53,7 +53,7 @@ app.use('/api/v1', require('./routes/v1'));
 // Error handling
 app.use(errorHandler);
 
-const port = config.port || 3000;
+const port = config.port || 5000;
 const server = app.listen(port, () => {
   logger.info(`Server running in ${config.env} mode on port ${port}`);
 });
