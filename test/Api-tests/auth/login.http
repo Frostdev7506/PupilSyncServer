@@ -1,0 +1,43 @@
+### Test Case 1: Valid Login
+POST http://localhost:5000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "neerajbutola7272@gmail.com",
+    "password": "GGWPGGWP"
+}
+
+### Test Case 2: Invalid Password
+POST http://localhost:5000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "test@example.com",
+    "password": "wrongpassword"
+}
+
+### Test Case 3: Non-existent User
+POST http://localhost:5000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "nonexistent@example.com",
+    "password": "Test@123"
+}
+
+### Test Case 4: Missing Required Fields
+POST http://localhost:5000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "test@example.com"
+}
+
+### Test Case 5: Invalid Email Format
+POST http://localhost:5000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "invalid-email",
+    "password": "Test@123"
+}
