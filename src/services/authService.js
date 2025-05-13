@@ -16,20 +16,30 @@ const { Users, Institutions, Students, Teachers } = models;
 
 
 exports.loginUser = async (email, password) => {
-  // Ensure this uses 'Users' correctly
+  // Find user by email
   const user = await Users.findOne({
     where: { email }
   });
 
-  if (!user || !(await user.correctPassword(password))) { // Assuming correctPassword exists
-    throw new Error('Incorrect email or password');
+  if (!user) {
+    throw new AppError('Incorrect email or password', 401);
   }
 
-  // Update last login time
-  user.last_login = new Date();
-  await user.save();
+  // Verify password using bcrypt
+  const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
+  if (!isPasswordCorrect) {
+    throw new AppError('Incorrect email or password', 401);
+  }
 
-  return user;
+  // Update last login time using the correct field name
+  await user.update({ lastLogin: new Date() });
+
+  // Return user without sensitive data
+  const userResponse = user.toJSON();
+  delete userResponse.passwordHash;
+  delete userResponse.verificationToken;
+
+  return userResponse;
 };
 
 exports.refreshAuthToken = async (token) => {
