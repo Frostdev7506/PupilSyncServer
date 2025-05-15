@@ -3,13 +3,13 @@ POST http://localhost:5000/api/v1/auth/register-institution
 Content-Type: application/json
 
 {
-  "email": "neerajbutola7272@gmail.com",
+  "email": "neerajbutola72@gmail.com",
   "password": "GGWPGGWP",
   "firstName": "Neroz",
   "lastName": "Smith",
   "name": "StudentHub",
   "address": "456 Learning Ave, Scholar Town, ST 12345",
-  "contactEmail": "neerajbutola7272@gmail.com"
+  "contactEmail": "neerajbutola72@gmail.com"
 }
 
 ### Register another institution (example with minimal data)

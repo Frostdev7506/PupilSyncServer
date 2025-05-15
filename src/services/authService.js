@@ -11,7 +11,7 @@ const initModels = require('../models/init-models');
 // 3. Call initModels to get the models object
 const models = initModels(sequelize);
 // 4. Destructure the specific models you need
-const { Users, Institutions, Students, Teachers } = models;
+const { Users, Institutions, Students, Teachers, Parents, ParentStudentLink } = models;
 
 
 
@@ -147,7 +147,7 @@ exports.registerStudent = async (studentData) => {
     const user = await Users.create(userData, { transaction });
 
     const userPlain = user && typeof user.toJSON === 'function' ? user.toJSON() : user;
-    
+
     const studentDetails = {
       userId: user.userId,
       institutionId: studentData.institutionId,
@@ -171,13 +171,13 @@ exports.registerStudent = async (studentData) => {
       const messages = err.errors ? err.errors.map(e => e.message).join(', ') : err.message;
       throw new AppError(`Validation Error: ${messages}`, 400);
     }
-    
+
     // Handle foreign key constraint violations
-    if (err.name === 'SequelizeForeignKeyConstraintError' || 
+    if (err.name === 'SequelizeForeignKeyConstraintError' ||
         (err.original && err.original.constraint === 'students_institution_id_fkey')) {
       throw new AppError('Invalid institution ID. Please ensure the institution exists.', 400);
     }
-    
+
     throw new AppError(`Error registering student: ${err.message || 'Internal Server Error'}`, 500);
   }
 };
@@ -239,5 +239,98 @@ exports.registerTeacher = async (teacherData) => {
       throw new AppError(`Validation Error: ${messages}`, 400);
     }
     throw new AppError(`Error registering teacher: ${err.message || 'Internal Server Error'}`, 500);
+  }
+};
+
+
+exports.registerParentAndLinkStudent = async (parentData) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    // Validate required fields
+    if (!parentData.email) {
+      throw new AppError('Email is required for parent registration.', 400);
+    }
+
+    if (!parentData.password) {
+      throw new AppError('Password is required for parent registration.', 400);
+    }
+
+    if (!parentData.studentId) {
+      throw new AppError('Student ID is required to link with parent.', 400);
+    }
+
+    // Verify that the student exists
+    const student = await Students.findByPk(parentData.studentId, { transaction });
+    if (!student) {
+      throw new AppError(`Student with ID ${parentData.studentId} not found.`, 404);
+    }
+
+    // Hash the password
+    const passwordHash = await bcrypt.hash(parentData.password, 12);
+
+    // Create user record for parent
+    const userData = {
+      email: parentData.email,
+      passwordHash,
+      firstName: parentData.firstName,
+      lastName: parentData.lastName,
+      role: 'parent',
+      isVerified: false
+    };
+
+    const user = await Users.create(userData, { transaction });
+    const userPlain = user && typeof user.toJSON === 'function' ? user.toJSON() : user;
+
+    // Create parent record
+    const parentDetails = {
+      userId: userPlain.userId
+    };
+
+    const parent = await Parents.create(parentDetails, { transaction });
+
+    // Create parent-student link
+    const linkDetails = {
+      parentId: parent.parentId,
+      studentId: parentData.studentId,
+      relationship: parentData.relationship || null
+    };
+
+    const parentStudentLink = await ParentStudentLink.create(linkDetails, { transaction });
+
+    // Commit the transaction
+    await transaction.commit();
+
+    // Prepare response (excluding sensitive data)
+    let userResponse = userPlain;
+    delete userResponse.passwordHash;
+    delete userResponse.verificationToken;
+
+    return {
+      user: userResponse,
+      parent,
+      linkedStudent: {
+        studentId: student.studentId,
+        relationship: parentStudentLink.relationship
+      }
+    };
+  } catch (err) {
+    // Rollback transaction on error
+    await transaction.rollback();
+    console.error("Error during parent registration:", err);
+
+    // Handle validation errors
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+      const messages = err.errors ? err.errors.map(e => e.message).join(', ') : err.message;
+      throw new AppError(`Validation Error: ${messages}`, 400);
+    }
+
+    // Handle foreign key constraint violations
+    if (err.name === 'SequelizeForeignKeyConstraintError') {
+      throw new AppError('Invalid reference. Please ensure all referenced IDs exist.', 400);
+    }
+
+    // Handle other errors
+    throw new AppError(`Error registering parent: ${err.message || 'Internal Server Error'}`, 500);
   }
 };

@@ -207,3 +207,55 @@ exports.registerTeacher = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * @swagger
+ * /register-parent:
+ *   post:
+ *     summary: Register a parent and link to a student
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               studentId:
+ *                 type: integer
+ *               relationship:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Parent registered successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Student not found
+ */
+exports.registerParent = async (req, res, next) => {
+  try {
+    // Basic validation
+    const { email, password, firstName, lastName, studentId } = req.body;
+    if (!email || !password || !firstName || !lastName || !studentId) {
+      return next(new AppError('Please provide email, password, first name, last name, and student ID', 400));
+    }
+
+    const { user, parent, linkedStudent } = await authService.registerParentAndLinkStudent(req.body);
+
+    // Use createSendToken, passing parent and linkedStudent data
+    createSendToken(user, 201, res, { parent, linkedStudent });
+
+  } catch (err) {
+    // Pass the error to the global error handler
+    next(err);
+  }
+};
