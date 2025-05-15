@@ -8,6 +8,7 @@ router.post('/register-institution', authController.registerInstitution);
 
 router.post('/register-student', authController.registerStudent);
 router.post('/register-teacher', authController.registerTeacher);
+router.post('/register-parent', authController.registerParent);
 router.get('/logout', authController.logout);
 router.post('/refresh-token', authController.refreshToken);
 
