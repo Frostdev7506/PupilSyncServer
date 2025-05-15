@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const SequelizeAuto = require('sequelize-auto');
 const { sequelize } = require('./src/config/db');
+const initModels = require('./src/models/init-models');
 
 const MODELS_DIR = './src/models';
 
@@ -20,7 +21,7 @@ const options = {
 async function generateModels() {
   console.log('📝 Generating models from database...');
   const auto = new SequelizeAuto(sequelize, null, null, options);
-  
+
   try {
     await auto.run();
     console.log('✅ Models generated successfully!');
@@ -33,10 +34,17 @@ async function generateModels() {
 async function syncDatabase(force = false) {
   console.log(`🔄 Syncing database${force ? ' (WITH FORCE)' : ''}...`);
   try {
+    // Initialize models before syncing
+    console.log('📋 Initializing models...');
+    const models = initModels(sequelize);
+    console.log(`📋 Loaded ${Object.keys(models).length} models`);
+
+    // Sync the database with all initialized models
     await sequelize.sync({ force });
     console.log('✅ Database synced successfully!');
   } catch (error) {
     console.error('❌ Error syncing database:', error);
+    console.error(error.stack);
     process.exit(1);
   }
 }
