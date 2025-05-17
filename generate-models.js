@@ -39,19 +39,8 @@ async function syncDatabase(force = false) {
     const models = initModels(sequelize);
     console.log(`📋 Loaded ${Object.keys(models).length} models`);
 
-    // Load and sort models by dependencies
-    const sortedModels = await loadAndSortModels();
-
     // Sync the database with all initialized models
-    // Sync tables in dependency order
-    for (const model of sortedModels) {
-      if (!model) {
-        console.warn(`⚠️  Skipping invalid model`);
-        continue;
-      }
-      console.log(`🔄 Syncing table for: ${model.name}`);
-      await model.sync({ force });
-    }
+    await sequelize.sync({ force });
     console.log('✅ Database synced successfully!');
   } catch (error) {
     console.error('❌ Error syncing database:', error);
@@ -100,82 +89,4 @@ Usage:
   await sequelize.close();
 }
 
-// Analyze dependencies based on foreign keys
-function sortModelsByDependency(models) {
-  const dependencies = {};
-  const modelMap = new Map();
-  
-  models.forEach(model => {
-    const modelName = model.name;
-    modelMap.set(modelName, model);
-    dependencies[modelName] = new Set();
-    
-    Object.values(model.rawAttributes).forEach(attr => {
-      if (attr.references) {
-        const referencedModel = attr.references.model;
-        if (modelMap.has(referencedModel)) {
-          dependencies[modelName].add(referencedModel);
-        }
-      }
-    });
-  });
-
-  const sorted = [];
-  const visited = new Set();
-  
-  function visit(modelName, path = []) {
-    if (path.includes(modelName)) {
-      throw new Error(`Circular dependency detected: ${path.join(' -> ')} -> ${modelName}`);
-    }
-    
-    if (!visited.has(modelName)) {
-      visited.add(modelName);
-      path.push(modelName);
-      
-      dependencies[modelName].forEach(dep => {
-        visit(dep, [...path]);
-      });
-      
-      sorted.push(modelMap.get(modelName));
-    }
-  }
-
-  modelMap.forEach((_, modelName) => {
-    if (!visited.has(modelName)) {
-      visit(modelName);
-    }
-  });
-
-  return sorted.reverse();
-}
-
-// Load and sort models
-async function loadAndSortModels() {
-  const modelDir = path.join(__dirname, 'src/models');
-  const modelFiles = await fs.readdir(modelDir);
-  
-  const filteredFiles = modelFiles.filter(file => 
-    file !== 'init-models.js' && file.endsWith('.js')
-  );
-
-  const models = await Promise.all(
-    filteredFiles.map(file => require(path.join(modelDir, file)))
-  );
-
-  try {
-    const sortedModels = sortModelsByDependency(models);
-    console.log('🔀 Sync order:', sortedModels.map(m => m.name).join(' → '));
-    console.log(`✅ Sorted ${sortedModels.length} models by dependencies`);
-    return sortedModels;
-  } catch (error) {
-    if (error.message.includes('Circular dependency')) {
-      console.error('❌ Database sync failed due to circular dependencies:');
-      console.error(error.message);
-      process.exit(1);
-    }
-    throw error;
-  }
-}
-
-// Initialize the application
 main().catch(console.error);
