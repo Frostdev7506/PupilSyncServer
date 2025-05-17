@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'parents',
+        model: 'parents', // Note: This references a 'parents' table
         key: 'parent_id'
       },
       field: 'parent_id'
@@ -22,22 +22,22 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'students',
+        model: 'students', // Note: This references a 'students' table
         key: 'student_id'
       },
       field: 'student_id'
     },
     notificationType: {
       type: DataTypes.ENUM(
-        'grade_update', 
-        'assignment_due', 
-        'assignment_missing', 
-        'exam_scheduled', 
-        'attendance_alert', 
-        'behavior_incident', 
-        'teacher_message', 
-        'course_announcement', 
-        'payment_due', 
+        'grade_update',
+        'assignment_due',
+        'assignment_missing',
+        'exam_scheduled',
+        'attendance_alert',
+        'behavior_incident',
+        'teacher_message',
+        'course_announcement',
+        'payment_due',
         'report_available'
       ),
       allowNull: false,
@@ -102,6 +102,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: false,
       field: 'sent_via_sms'
     },
+    // Removed the {{ edit_1 }} placeholder
     readAt: {
       type: DataTypes.DATE,
       allowNull: true,
@@ -113,6 +114,7 @@ module.exports = function(sequelize, DataTypes) {
     schema: 'public',
     timestamps: true,
     paranoid: true,
+    underscored: true, // Add this line to use snake_case for timestamps
     indexes: [
       {
         name: "parent_notifications_pkey",

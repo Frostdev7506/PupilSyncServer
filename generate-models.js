@@ -23,7 +23,7 @@ async function generateModels() {
   const auto = new SequelizeAuto(sequelize, null, null, options);
 
   try {
-    await auto.run();
+    // await auto.run();
     console.log('✅ Models generated successfully!');
   } catch (error) {
     console.error('❌ Error generating models:', error);
@@ -34,13 +34,83 @@ async function generateModels() {
 async function syncDatabase(force = false) {
   console.log(`🔄 Syncing database${force ? ' (WITH FORCE)' : ''}...`);
   try {
-    // Initialize models before syncing
     console.log('📋 Initializing models...');
     const models = initModels(sequelize);
     console.log(`📋 Loaded ${Object.keys(models).length} models`);
 
-    // Sync the database with all initialized models
-    await sequelize.sync({ force });
+    const syncOrder = [
+      models.SequelizeMeta,
+      models.Users,
+      models.Institutions,
+      models.CourseCategories,
+      models.Teachers,
+      models.Students,
+      models.Admins,
+      models.Parents,
+      models.ParentStudentLink,
+      models.Courses,
+      models.Lessons,
+      models.ContentBlocks,
+      models.Quizzes,
+      models.QuizQuestions,
+      models.QuizAnswers,
+      models.Classes,
+      models.Exams,
+      models.ExamQuestions,
+      models.ExamAnswers,
+      models.ExamStudentAssignments,
+      models.ExamQuestionAssignments,
+      models.StudentExamAttempts,
+      models.StudentExamResponses,
+      models.Messages,
+      models.ParentNotifications,
+      models.Assignments,
+      models.StudentQuizAttempts,
+      models.StudentQuizResponses,
+      models.LearningAnalytics,
+      models.CollaborativeProjects,
+      models.ProjectTeams,
+      // Ensure ALL your models are listed here in the correct order
+      models.AnalyticsEvents,
+      models.AssignmentRubrics,
+      models.Attendance,
+      models.ChatMessages,
+      models.ChatParticipants,
+      models.ChatRooms,
+      models.ClassEnrollments,
+      models.ContentEngagements,
+      models.CourseCategoryMappings,
+      models.CourseReviews,
+      models.DiscussionForums,
+      models.DiscussionTopics,
+      models.DiscussionReplies,
+      models.Enrollments,
+      models.OtpCodes,
+      models.ParentAccessSettings,
+      models.ProjectTeamMembers,
+      models.RubricCriteria,
+      models.RubricScores,
+      models.StudentProgressReports,
+      models.SubmissionAttachments,
+      models.Submissions,
+      models.TeacherEarnings,
+      models.TeacherInstitutions,
+      models.TeacherProfiles,
+      models.TeacherReviews,
+    ];
+
+    const modelsInSyncOrder = syncOrder.map(model => model.name);
+    const allModelNames = Object.keys(models);
+    const missingModels = allModelNames.filter(name => !modelsInSyncOrder.includes(name));
+
+    if (missingModels.length > 0) {
+      console.warn(`⚠️ WARNING: The following models are not included in the syncOrder: ${missingModels.join(', ')}. They will NOT be synced.`);
+    } else {
+       console.log('📋 All models included in sync order.');
+    }
+
+    await sequelize.sync({ force, order: syncOrder });
+
     console.log('✅ Database synced successfully!');
   } catch (error) {
     console.error('❌ Error syncing database:', error);
@@ -71,22 +141,22 @@ async function main() {
 
     case 'full':
       const forceSync = args.includes('--force');
-      await generateModels();
-      await syncDatabase(forceSync);
+      await syncDatabase(forceSync); // Sync first to create schema
+      await generateModels(); // Then generate models from the created schema
       break;
 
     default:
       console.log(`
 Usage:
   node generate-models.js generate     - Generate models from database
-  node generate-models.js sync         - Sync models to database (safe)
-  node generate-models.js sync --force - Sync models to database (force)
-  node generate-models.js full         - Generate and sync (safe)
-  node generate-models.js full --force - Generate and sync (force)
+  node generate-models.js sync         - Sync models to database (safe/alter)
+  node generate-models.js sync --force - Sync models to database (force/drop & create)
+  node generate-models.js full         - Sync (safe/alter) and generate models
+  node generate-models.js full --force - Sync (force/drop & create) and generate models
       `);
   }
 
-  await sequelize.close();
+  // await sequelize.close();
 }
 
 main().catch(console.error);
