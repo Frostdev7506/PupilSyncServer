@@ -38,11 +38,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    fileUrl: {
-      type: DataTypes.STRING(512),
-      allowNull: true,
-      field: 'file_url'
-    },
     grade: {
       type: DataTypes.DECIMAL,
       allowNull: true

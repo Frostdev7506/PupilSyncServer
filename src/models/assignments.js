@@ -30,6 +30,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(255),
       allowNull: false
     },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     instructions: {
       type: DataTypes.TEXT,
       allowNull: true
@@ -39,10 +43,47 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       field: 'due_date'
     },
+    availableFrom: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'available_from'
+    },
+    availableUntil: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'available_until'
+    },
     maxPoints: {
       type: DataTypes.DECIMAL,
       allowNull: true,
       field: 'max_points'
+    },
+    submissionType: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      defaultValue: 'file',
+      field: 'submission_type'
+    },
+    allowLateSubmissions: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'allow_late_submissions'
+    },
+    latePenalty: {
+      type: DataTypes.DECIMAL,
+      allowNull: true,
+      field: 'late_penalty'
+    },
+    visibleToStudents: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'visible_to_students'
+    },
+    attachments: {
+      type: DataTypes.JSONB,
+      allowNull: true
     }
   }, {
     sequelize,

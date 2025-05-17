@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:3000/api/v1
+@baseUrl = http://localhost:5000/api/v1
 
 ### Test Case 1: Complete Student Registration with Class Enrollments and Quiz Attempts
 POST {{baseUrl}}/register-student

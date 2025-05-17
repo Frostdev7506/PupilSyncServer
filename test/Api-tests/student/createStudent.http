@@ -6,13 +6,13 @@ Content-Type: application/json
 "email": "student69.test@example.com",
     "password": "Test226@123",
     "firstName": "John",
-    "lastName": "Doe",
-    "institutionId":6,
+    "lastName": "Wick",
+    "institutionId":2,
     "gradeLevel": "8"
 }
 
 ### Register another student (minimal data)
-POST http://localhost:3000/api/v1/auth/register-student
+POST http://localhost:5000/api/v1/auth/register-student
 Content-Type: application/json
 
 {

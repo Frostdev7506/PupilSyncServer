@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
 const helmet = require('helmet');
 const swaggerUI = require('swagger-ui-express');
@@ -10,6 +11,7 @@ const config = require('./config');
 const logger = require('./utils/logger');
 const errorHandler = require('./middlewares/error/errorHandler');
 const { connectDB } = require('./config/db'); // Import the connectDB function
+const socketManager = require('./utils/socketManager');
 
 const app = express();
 
@@ -54,7 +56,12 @@ app.use('/api/v1', require('./routes/v1'));
 app.use(errorHandler);
 
 const port = config.port || 5000;
-const server = app.listen(port, () => {
+const server = http.createServer(app);
+
+// Initialize Socket.IO
+socketManager.initialize(server);
+
+server.listen(port, () => {
   logger.info(`Server running in ${config.env} mode on port ${port}`);
 });
 

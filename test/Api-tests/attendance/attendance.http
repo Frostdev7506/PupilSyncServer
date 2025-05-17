@@ -1,0 +1,97 @@
+@baseUrl = http://localhost:5000/api/v1
+@authToken = {{login.response.body.token}}
+
+### Login as a teacher
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "teacher.test@example.com",
+  "password": "Test@123"
+}
+
+### Create a single attendance record
+POST {{baseUrl}}/attendance
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "studentId": 1,
+  "classId": 1,
+  "date": "2023-10-15",
+  "status": "present",
+  "notes": "Student arrived on time"
+}
+
+### Create bulk attendance records
+POST {{baseUrl}}/attendance/bulk
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "attendanceRecords": [
+    {
+      "studentId": 1,
+      "classId": 1,
+      "date": "2023-10-16",
+      "status": "present"
+    },
+    {
+      "studentId": 2,
+      "classId": 1,
+      "date": "2023-10-16",
+      "status": "absent",
+      "notes": "Student was sick"
+    },
+    {
+      "studentId": 3,
+      "classId": 1,
+      "date": "2023-10-16",
+      "status": "late",
+      "notes": "Student arrived 15 minutes late"
+    }
+  ]
+}
+
+### Get attendance record by ID
+GET {{baseUrl}}/attendance/1
+Authorization: Bearer {{authToken}}
+
+### Get attendance records for a student
+GET {{baseUrl}}/attendance/student/1
+Authorization: Bearer {{authToken}}
+
+### Get attendance records for a student with filters
+GET {{baseUrl}}/attendance/student/1?startDate=2023-10-01&endDate=2023-10-31&status=present&classId=1
+Authorization: Bearer {{authToken}}
+
+### Get attendance records for a class
+GET {{baseUrl}}/attendance/class/1
+Authorization: Bearer {{authToken}}
+
+### Get attendance records for a class with filters
+GET {{baseUrl}}/attendance/class/1?date=2023-10-16&status=present
+Authorization: Bearer {{authToken}}
+
+### Get attendance statistics for a student
+GET {{baseUrl}}/attendance/stats/student/1
+Authorization: Bearer {{authToken}}
+
+### Get attendance statistics for a student with date range
+GET {{baseUrl}}/attendance/stats/student/1?startDate=2023-10-01&endDate=2023-10-31
+Authorization: Bearer {{authToken}}
+
+### Update an attendance record
+PATCH {{baseUrl}}/attendance/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "excused",
+  "notes": "Student was excused for medical appointment"
+}
+
+### Delete an attendance record
+DELETE {{baseUrl}}/attendance/1
+Authorization: Bearer {{authToken}}

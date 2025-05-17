@@ -38,6 +38,12 @@ module.exports = function(sequelize, DataTypes) {
     schema: 'public',
     timestamps: true,
     paranoid: true,
+    associate: function(models) {
+      this.hasMany(models.ContentEngagements, {
+        foreignKey: 'contentBlockId',
+        as: 'engagements'
+      });
+    },
     indexes: [
       {
         name: "content_blocks_pkey",

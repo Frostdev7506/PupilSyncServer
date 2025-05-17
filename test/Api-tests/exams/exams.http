@@ -1,0 +1,222 @@
+@baseUrl = http://localhost:5000/api/v1
+@authToken = {{loginTeacher.response.body.token}}
+@studentToken = {{loginStudent.response.body.token}}
+
+### Login as a teacher
+# @name loginTeacher
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "teacher.test@example.com",
+  "password": "Test@123"
+}
+
+### Login as a student
+# @name loginStudent
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "student.test@example.com",
+  "password": "Test@123"
+}
+
+### Create a new exam
+POST {{baseUrl}}/exams
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Midterm Exam",
+  "description": "Comprehensive midterm exam covering chapters 1-5",
+  "courseId": 1,
+  "classId": 1,
+  "startDate": "2023-11-01T09:00:00.000Z",
+  "endDate": "2023-11-01T11:00:00.000Z",
+  "duration": 120,
+  "passingPercentage": 60,
+  "totalPoints": 100,
+  "instructions": "Answer all questions. No electronic devices allowed."
+}
+
+### Get all exams
+GET {{baseUrl}}/exams
+Authorization: Bearer {{authToken}}
+
+### Get all exams with filters
+GET {{baseUrl}}/exams?teacherId=1&courseId=1&isPublished=true
+Authorization: Bearer {{authToken}}
+
+### Get exam by ID
+GET {{baseUrl}}/exams/1
+Authorization: Bearer {{authToken}}
+
+### Update an exam
+PATCH {{baseUrl}}/exams/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Updated Midterm Exam",
+  "description": "Updated description",
+  "isPublished": true
+}
+
+### Add a multiple-choice question to an exam
+POST {{baseUrl}}/exams/1/questions
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "questionText": "What is the capital of France?",
+  "questionType": "multiple_choice",
+  "points": 5,
+  "orderNumber": 1,
+  "answers": [
+    {
+      "answerText": "London",
+      "isCorrect": false
+    },
+    {
+      "answerText": "Paris",
+      "isCorrect": true
+    },
+    {
+      "answerText": "Berlin",
+      "isCorrect": false
+    },
+    {
+      "answerText": "Madrid",
+      "isCorrect": false
+    }
+  ]
+}
+
+### Add a short answer question to an exam
+POST {{baseUrl}}/exams/1/questions
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "questionText": "Name the largest planet in our solar system.",
+  "questionType": "short_answer",
+  "points": 5,
+  "orderNumber": 2,
+  "correctAnswer": "Jupiter",
+  "caseSensitive": false,
+  "allowPartialMatch": false
+}
+
+### Add a fill-in-the-blank question to an exam
+POST {{baseUrl}}/exams/1/questions
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "questionText": "The process of plants making their own food using sunlight is called ___________.",
+  "questionType": "fill_in_blank",
+  "points": 5,
+  "orderNumber": 3,
+  "correctAnswer": "photosynthesis",
+  "caseSensitive": false,
+  "allowPartialMatch": true
+}
+
+### Update a question
+PATCH {{baseUrl}}/exams/questions/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "questionText": "Updated question text",
+  "points": 10,
+  "answers": [
+    {
+      "answerText": "Updated answer 1",
+      "isCorrect": false
+    },
+    {
+      "answerText": "Updated answer 2",
+      "isCorrect": true
+    },
+    {
+      "answerText": "Updated answer 3",
+      "isCorrect": false
+    }
+  ]
+}
+
+### Delete a question
+DELETE {{baseUrl}}/exams/questions/3
+Authorization: Bearer {{authToken}}
+
+### Assign an exam to students
+POST {{baseUrl}}/exams/1/assign
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "studentIds": [1, 2, 3],
+  "options": {
+    "customStartDate": "2023-11-01T10:00:00.000Z",
+    "customEndDate": "2023-11-01T12:00:00.000Z",
+    "studentQuestions": {
+      "1": [1, 2, 3],
+      "2": [1, 3]
+    },
+    "customPoints": {
+      "1": {
+        "1": 10,
+        "2": 15
+      }
+    }
+  }
+}
+
+### Get exams assigned to a student
+GET {{baseUrl}}/exams/student/1/assignments
+Authorization: Bearer {{studentToken}}
+
+### Get upcoming exams for a student
+GET {{baseUrl}}/exams/student/1/assignments?upcoming=true
+Authorization: Bearer {{studentToken}}
+
+### Start an exam attempt
+POST {{baseUrl}}/exams/assignments/1/start
+Authorization: Bearer {{studentToken}}
+
+### Submit a response for a multiple-choice question
+POST {{baseUrl}}/exams/attempts/1/questions/1/response
+Content-Type: application/json
+Authorization: Bearer {{studentToken}}
+
+{
+  "chosenAnswerId": 2
+}
+
+### Submit a response for a short answer question
+POST {{baseUrl}}/exams/attempts/1/questions/2/response
+Content-Type: application/json
+Authorization: Bearer {{studentToken}}
+
+{
+  "textResponse": "Jupiter"
+}
+
+### Submit a response for a fill-in-the-blank question
+POST {{baseUrl}}/exams/attempts/1/questions/3/response
+Content-Type: application/json
+Authorization: Bearer {{studentToken}}
+
+{
+  "textResponse": "photosynthesis"
+}
+
+### Complete an exam attempt
+POST {{baseUrl}}/exams/attempts/1/complete
+Authorization: Bearer {{studentToken}}
+
+### Delete an exam
+DELETE {{baseUrl}}/exams/1
+Authorization: Bearer {{authToken}}

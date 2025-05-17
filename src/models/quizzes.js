@@ -41,6 +41,12 @@ module.exports = function(sequelize, DataTypes) {
     schema: 'public',
     timestamps: true,
     paranoid: true,
+    associate: function(models) {
+      this.hasMany(models.QuizQuestions, {
+        foreignKey: 'quizId',
+        as: 'questions'
+      });
+    },
     indexes: [
       {
         name: "idx_quizzes_course_id",
