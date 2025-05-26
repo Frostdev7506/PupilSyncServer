@@ -1,129 +1,121 @@
 var DataTypes = require("sequelize").DataTypes;
 var _SequelizeMeta = require("./sequelizeMeta");
 var _Users = require("./users");
+var _Institutions = require("./institutions");
+var _CourseCategories = require("./courseCategories");
 var _Teachers = require("./teachers");
 var _Students = require("./students");
-var _Institutions = require("./institutions");
+var _Admins = require("./admins");
+var _Parents = require("./parents");
+var _ParentStudentLink = require("./parentStudentLink");
+var _ParentNotifications = require("./parentNotifications"); // Moved ParentNotifications import
 var _Courses = require("./courses");
 var _Lessons = require("./lessons");
+var _ContentBlocks = require("./contentBlocks");
 var _Quizzes = require("./quizzes");
 var _QuizQuestions = require("./quizQuestions");
 var _QuizAnswers = require("./quizAnswers");
+var _Classes = require("./classes");
+var _Exams = require("./exams");
+var _ExamQuestions = require("./examQuestions");
+var _ExamAnswers = require("./examAnswers");
+var _ExamStudentAssignments = require("./examStudentAssignments");
+var _ExamQuestionAssignments = require("./examQuestionAssignments");
+var _StudentExamAttempts = require("./studentExamAttempts");
+var _StudentExamResponses = require("./studentExamResponses");
+var _Messages = require("./messages");
+var _Assignments = require("./assignments"); // Moved Assignment import
+var _Submissions = require("./submissions"); // Moved Submission import
+var _AssignmentRubrics = require("./assignmentRubrics"); // Moved AssignmentRubrics import
+var _RubricCriteria = require("./rubricCriteria"); // Moved RubricCriteria import
+var _RubricScores = require("./rubricScores"); // Moved RubricScores import
 var _StudentQuizAttempts = require("./studentQuizAttempts");
 var _StudentQuizResponses = require("./studentQuizResponses");
-var _Assignments = require("./assignments");
-var _Admins = require("./admins");
 var _LearningAnalytics = require("./learningAnalytics");
-var _Classes = require("./classes");
-var _Parents = require("./parents"); // Add this line
-
-var _Exams = require("./exams");
-var _ExamStudentAssignments = require("./examStudentAssignments");
-
-var _ExamQuestionAssignments = require("./examQuestionAssignments");
-var _ParentNotifications = require("./parentNotifications");
-var _CourseCategories = require("./courseCategories");
-var _Messages = require("./messages");
-var _ContentBlocks = require("./contentBlocks");
-var _StudentExamAttempts = require("./studentExamAttempts");
-var _ExamAnswers = require("./examAnswers");
-
-var _StudentExamResponses = require("./studentExamResponses");
-var _ExamQuestions = require("./examQuestions");
-var _ParentStudentLink = require("./parentStudentLink");
 var _CollaborativeProjects = require("./collaborativeProjects");
 var _ProjectTeams = require("./projectTeams");
-
-// Add new model imports
-var _AnalyticsEvents = require("./analyticsEvents");
-var _AssignmentRubrics = require("./assignmentRubrics");
-var _Attendance = require("./attendance");
-var _ChatMessages = require("./ChatMessages");
-var _ChatParticipants = require("./ChatParticipants");
-var _ChatRooms = require("./ChatRooms");
-var _ClassEnrollments = require("./classEnrollments");
-var _ContentEngagements = require("./contentEngagements");
-var _CourseCategoryMappings = require("./courseCategoryMappings");
-var _CourseReviews = require("./courseReviews");
-var _DiscussionForums = require("./discussionForums");
-var _DiscussionReplies = require("./discussionReplies");
-var _DiscussionTopics = require("./discussionTopics");
-var _Enrollments = require("./enrollments");
-var _OtpCodes = require("./otpCodes");
-var _ParentAccessSettings = require("./parentAccessSettings");
-var _ProjectTeamMembers = require("./projectTeamMembers");
-var _RubricCriteria = require("./rubricCriteria");
-var _RubricScores = require("./rubricScores");
-var _StudentProgressReports = require("./studentProgressReports");
-var _SubmissionAttachments = require("./submissionAttachments");
-var _Submissions = require("./submissions");
-var _TeacherEarnings = require("./teacherEarnings");
-var _TeacherInstitutions = require("./teacherInstitutions");
-var _TeacherProfiles = require("./teacherProfiles");
-var _TeacherReviews = require("./teacherReviews");
+var _AnalyticsEvents = require("./analyticsEvents"); // Moved AnalyticsEvents import
+var _Attendance = require("./attendance"); // Moved Attendance import
+var _ChatRooms = require("./ChatRooms"); // Moved ChatRooms import
+var _ChatParticipants = require("./ChatParticipants"); // Moved ChatParticipants import
+var _ChatMessages = require("./ChatMessages"); // Moved ChatMessages import
+var _ClassEnrollments = require("./classEnrollments"); // Moved ClassEnrollments import
+var _ContentEngagements = require("./contentEngagements"); // Moved ContentEngagements import
+var _CourseCategoryMappings = require("./courseCategoryMappings"); // Moved CourseCategoryMappings import
+var _CourseReviews = require("./courseReviews"); // Moved CourseReviews import
+var _DiscussionForums = require("./discussionForums"); // Moved DiscussionForums import
+var _DiscussionTopics = require("./discussionTopics"); // Moved DiscussionTopics import
+var _DiscussionReplies = require("./discussionReplies"); // Moved DiscussionReplies import
+var _Enrollments = require("./enrollments"); // Moved Enrollments import
+var _OtpCodes = require("./otpCodes"); // Moved OtpCodes import
+var _ParentAccessSettings = require("./parentAccessSettings"); // Moved ParentAccessSettings import
+var _ProjectTeamMembers = require("./projectTeamMembers"); // Moved ProjectTeamMembers import
+var _StudentProgressReports = require("./studentProgressReports"); // Moved StudentProgressReports import
+var _SubmissionAttachments = require("./submissionAttachments"); // Moved SubmissionAttachments import
+var _TeacherEarnings = require("./teacherEarnings"); // Moved TeacherEarnings import
+var _TeacherInstitutions = require("./teacherInstitutions"); // Moved TeacherInstitutions import
+var _TeacherProfiles = require("./teacherProfiles"); // Moved TeacherProfiles import
+var _TeacherReviews = require("./teacherReviews"); // Moved TeacherReviews import
 
 
 function initModels(sequelize) {
   var SequelizeMeta = _SequelizeMeta(sequelize, DataTypes);
   var Users = _Users(sequelize, DataTypes);
+  var Institutions = _Institutions(sequelize, DataTypes);
+  var CourseCategories = _CourseCategories(sequelize, DataTypes);
   var Teachers = _Teachers(sequelize, DataTypes);
   var Students = _Students(sequelize, DataTypes);
-  var Institutions = _Institutions(sequelize, DataTypes);
+  var Admins = _Admins(sequelize, DataTypes);
+  var Parents = _Parents(sequelize, DataTypes);
+  var ParentStudentLink = _ParentStudentLink(sequelize, DataTypes);
+  var ParentNotifications = _ParentNotifications(sequelize, DataTypes); // Moved ParentNotifications initialization
   var Courses = _Courses(sequelize, DataTypes);
   var Lessons = _Lessons(sequelize, DataTypes);
+  var ContentBlocks = _ContentBlocks(sequelize, DataTypes);
   var Quizzes = _Quizzes(sequelize, DataTypes);
   var QuizQuestions = _QuizQuestions(sequelize, DataTypes);
   var QuizAnswers = _QuizAnswers(sequelize, DataTypes);
+  var Classes = _Classes(sequelize, DataTypes);
+  var Exams = _Exams(sequelize, DataTypes);
+  var ExamQuestions = _ExamQuestions(sequelize, DataTypes);
+  var ExamAnswers = _ExamAnswers(sequelize, DataTypes);
+  var ExamStudentAssignments = _ExamStudentAssignments(sequelize, DataTypes);
+  var ExamQuestionAssignments = _ExamQuestionAssignments(sequelize, DataTypes);
+  var StudentExamAttempts = _StudentExamAttempts(sequelize, DataTypes);
+  var StudentExamResponses = _StudentExamResponses(sequelize, DataTypes);
+  var Messages = _Messages(sequelize, DataTypes);
+  var Assignments = _Assignments(sequelize, DataTypes); // Moved Assignment initialization
+  var Submissions = _Submissions(sequelize, DataTypes); // Moved Submission initialization
+  var AssignmentRubrics = _AssignmentRubrics(sequelize, DataTypes); // Moved AssignmentRubrics initialization
+  var RubricCriteria = _RubricCriteria(sequelize, DataTypes); // Moved RubricCriteria initialization
+  var RubricScores = _RubricScores(sequelize, DataTypes); // Moved RubricScores initialization
   var StudentQuizAttempts = _StudentQuizAttempts(sequelize, DataTypes);
   var StudentQuizResponses = _StudentQuizResponses(sequelize, DataTypes);
-  var Assignments = _Assignments(sequelize, DataTypes);
-  var Admins = _Admins(sequelize, DataTypes);
-  var ContentBlocks = _ContentBlocks(sequelize, DataTypes);
   var LearningAnalytics = _LearningAnalytics(sequelize, DataTypes);
-  var Classes = _Classes(sequelize, DataTypes);
-  var Parents = _Parents(sequelize, DataTypes); // Add this line
-
-  var Exams = _Exams(sequelize, DataTypes);
-  var ExamStudentAssignments = _ExamStudentAssignments(sequelize, DataTypes);
-  var ExamQuestions = _ExamQuestions(sequelize, DataTypes); // Initialize ExamQuestions before ExamQuestionAssignments
-  var ExamQuestionAssignments = _ExamQuestionAssignments(sequelize, DataTypes);
-  var ParentNotifications = _ParentNotifications(sequelize, DataTypes);
-  var CourseCategories = _CourseCategories(sequelize, DataTypes);
-  var Messages = _Messages(sequelize, DataTypes);
-  var StudentExamAttempts = _StudentExamAttempts(sequelize, DataTypes);
-  var ExamAnswers = _ExamAnswers(sequelize, DataTypes);
-  var StudentExamResponses = _StudentExamResponses(sequelize, DataTypes);
-  var ParentStudentLink = _ParentStudentLink(sequelize, DataTypes);
   var CollaborativeProjects = _CollaborativeProjects(sequelize, DataTypes);
   var ProjectTeams = _ProjectTeams(sequelize, DataTypes);
-
-  // Initialize new models
-  var AnalyticsEvents = _AnalyticsEvents(sequelize, DataTypes);
-  var AssignmentRubrics = _AssignmentRubrics(sequelize, DataTypes);
-  var Attendance = _Attendance(sequelize, DataTypes);
-  var ChatMessages = _ChatMessages(sequelize, DataTypes);
-  var ChatParticipants = _ChatParticipants(sequelize, DataTypes);
-  var ChatRooms = _ChatRooms(sequelize, DataTypes);
-  var ClassEnrollments = _ClassEnrollments(sequelize, DataTypes);
-  var ContentEngagements = _ContentEngagements(sequelize, DataTypes);
-  var CourseCategoryMappings = _CourseCategoryMappings(sequelize, DataTypes);
-  var CourseReviews = _CourseReviews(sequelize, DataTypes);
-  var DiscussionForums = _DiscussionForums(sequelize, DataTypes);
-  var DiscussionReplies = _DiscussionReplies(sequelize, DataTypes);
-  var DiscussionTopics = _DiscussionTopics(sequelize, DataTypes);
-  var Enrollments = _Enrollments(sequelize, DataTypes);
-  var OtpCodes = _OtpCodes(sequelize, DataTypes);
-  var ParentAccessSettings = _ParentAccessSettings(sequelize, DataTypes);
-  var ProjectTeamMembers = _ProjectTeamMembers(sequelize, DataTypes);
-  var RubricCriteria = _RubricCriteria(sequelize, DataTypes);
-  var RubricScores = _RubricScores(sequelize, DataTypes);
-  var StudentProgressReports = _StudentProgressReports(sequelize, DataTypes);
-  var SubmissionAttachments = _SubmissionAttachments(sequelize, DataTypes);
-  var Submissions = _Submissions(sequelize, DataTypes);
-  var TeacherEarnings = _TeacherEarnings(sequelize, DataTypes);
-  var TeacherInstitutions = _TeacherInstitutions(sequelize, DataTypes);
-  var TeacherProfiles = _TeacherProfiles(sequelize, DataTypes);
-  var TeacherReviews = _TeacherReviews(sequelize, DataTypes);
+  var AnalyticsEvents = _AnalyticsEvents(sequelize, DataTypes); // Moved AnalyticsEvents initialization
+  var Attendance = _Attendance(sequelize, DataTypes); // Moved Attendance initialization
+  var ChatRooms = _ChatRooms(sequelize, DataTypes); // Moved ChatRooms initialization
+  var ChatParticipants = _ChatParticipants(sequelize, DataTypes); // Moved ChatParticipants initialization
+  var ChatMessages = _ChatMessages(sequelize, DataTypes); // Moved ChatMessages initialization
+  var ClassEnrollments = _ClassEnrollments(sequelize, DataTypes); // Moved ClassEnrollments initialization
+  var ContentEngagements = _ContentEngagements(sequelize, DataTypes); // Moved ContentEngagements initialization
+  var CourseCategoryMappings = _CourseCategoryMappings(sequelize, DataTypes); // Moved CourseCategoryMappings initialization
+  var CourseReviews = _CourseReviews(sequelize, DataTypes); // Moved CourseReviews initialization
+  var DiscussionForums = _DiscussionForums(sequelize, DataTypes); // Moved DiscussionForums initialization
+  var DiscussionTopics = _DiscussionTopics(sequelize, DataTypes); // Moved DiscussionTopics initialization
+  var DiscussionReplies = _DiscussionReplies(sequelize, DataTypes); // Moved DiscussionReplies initialization
+  var Enrollments = _Enrollments(sequelize, DataTypes); // Moved Enrollments initialization
+  var OtpCodes = _OtpCodes(sequelize, DataTypes); // Moved OtpCodes initialization
+  var ParentAccessSettings = _ParentAccessSettings(sequelize, DataTypes); // Moved ParentAccessSettings initialization
+  var ProjectTeamMembers = _ProjectTeamMembers(sequelize, DataTypes); // Moved ProjectTeamMembers initialization
+  var StudentProgressReports = _StudentProgressReports(sequelize, DataTypes); // Moved StudentProgressReports initialization
+  var SubmissionAttachments = _SubmissionAttachments(sequelize, DataTypes); // Moved SubmissionAttachments initialization
+  var TeacherEarnings = _TeacherEarnings(sequelize, DataTypes); // Moved TeacherEarnings initialization
+  var TeacherInstitutions = _TeacherInstitutions(sequelize, DataTypes); // Moved TeacherInstitutions initialization
+  var TeacherProfiles = _TeacherProfiles(sequelize, DataTypes); // Moved TeacherProfiles initialization
+  var TeacherReviews = _TeacherReviews(sequelize, DataTypes); // Moved TeacherReviews initialization
 
 
   // Quiz System Associations
@@ -334,16 +326,16 @@ function initModels(sequelize) {
     AnalyticsEvents,
     AssignmentRubrics,
     Attendance,
-    ChatMessages,
-    ChatParticipants,
     ChatRooms,
+    ChatParticipants,
+    ChatMessages,
     ClassEnrollments,
     ContentEngagements,
     CourseCategoryMappings,
     CourseReviews,
     DiscussionForums,
-    DiscussionReplies,
     DiscussionTopics,
+    DiscussionReplies,
     Enrollments,
     OtpCodes,
     ParentAccessSettings,

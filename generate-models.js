@@ -64,7 +64,12 @@ async function syncDatabase(force = false) {
       models.StudentExamResponses,
       models.Messages,
       models.ParentNotifications,
-      models.Assignments,
+      // Reordered assignment and rubric models
+      models.Assignments, // <-- Ensure Assignments is before Submissions
+      models.Submissions, // <-- Moved Submissions before RubricScores
+      models.AssignmentRubrics, // <-- Ensure AssignmentRubrics is before RubricCriteria
+      models.RubricCriteria, // <-- Ensure RubricCriteria is before RubricScores
+      models.RubricScores, // <-- Moved RubricScores after its dependencies
       models.StudentQuizAttempts,
       models.StudentQuizResponses,
       models.LearningAnalytics,
@@ -72,11 +77,10 @@ async function syncDatabase(force = false) {
       models.ProjectTeams,
       // Ensure ALL your models are listed here in the correct order
       models.AnalyticsEvents,
-      models.AssignmentRubrics,
       models.Attendance,
-      models.ChatMessages,
-      models.ChatParticipants,
       models.ChatRooms,
+      models.ChatParticipants,
+      models.ChatMessages,
       models.ClassEnrollments,
       models.ContentEngagements,
       models.CourseCategoryMappings,
@@ -88,11 +92,8 @@ async function syncDatabase(force = false) {
       models.OtpCodes,
       models.ParentAccessSettings,
       models.ProjectTeamMembers,
-      models.RubricCriteria,
-      models.RubricScores,
       models.StudentProgressReports,
       models.SubmissionAttachments,
-      models.Submissions,
       models.TeacherEarnings,
       models.TeacherInstitutions,
       models.TeacherProfiles,
