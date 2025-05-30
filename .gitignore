@@ -9,7 +9,7 @@
 
 
 # Database config
-# src/config/config.json
+src/config/*
 # !src/config/config.example.json
 
 # Logs
