@@ -1,25 +1,47 @@
+// src/routes/v1/chatRoutes.js
+
 const express = require('express');
 const router = express.Router();
 const chatController = require('../../controllers/chatController');
-const { protect, restrictTo } = require('../../middlewares/auth');
+const { protect, restrictTo } = require('../../middlewares/auth'); // Correct path to your auth middleware
 
-// All routes require authentication
+// All routes below this line are protected and require a valid authenticated user.
 router.use(protect);
 
-// Chat room management
-router.post('/', restrictTo('student', 'teacher', 'admin'), chatController.createChatRoom);
-router.get('/', restrictTo('student', 'teacher', 'admin'), chatController.getUserChatRooms);
-router.get('/:id', restrictTo('student', 'teacher', 'admin'), chatController.getChatRoomById);
-router.patch('/:id', restrictTo('teacher', 'admin'), chatController.updateChatRoom);
-router.delete('/:id', restrictTo('teacher', 'admin'), chatController.deleteChatRoom);
+// --- Chat Room Management ---
 
-// Chat participants management
-router.post('/:id/users', restrictTo('teacher', 'admin'), chatController.addUsersToChat);
-router.delete('/:id/users', restrictTo('teacher', 'admin'), chatController.removeUsersFromChat);
+// Any authenticated user can create a chat room or list their own rooms.
+router.route('/')
+  .post(restrictTo('student', 'teacher', 'admin'), chatController.createChatRoom)
+  .get(restrictTo('student', 'teacher', 'admin'), chatController.getUserChatRooms);
 
-// Chat messages
-router.get('/:id/messages', restrictTo('student', 'teacher', 'admin'), chatController.getChatMessages);
-router.post('/:id/messages', restrictTo('student', 'teacher', 'admin'), chatController.sendChatMessage);
-router.delete('/:id/messages/:messageId', restrictTo('student', 'teacher', 'admin'), chatController.deleteChatMessage);
+// Any participant can get room details. Only admins/teachers can update or delete.
+router.route('/:id')
+  .get(restrictTo('student', 'teacher', 'admin'), chatController.getChatRoomDetails)
+  .patch(restrictTo('teacher', 'admin'), chatController.updateChatRoom)
+  .delete(restrictTo('teacher', 'admin'), chatController.deleteChatRoom);
+
+// --- Participant Management ---
+
+// Only admins/teachers can add users to a group.
+router.route('/:id/participants')
+  .post(restrictTo('teacher', 'admin'), chatController.addUserToGroup);
+
+// Only admins/teachers can remove users from a group.
+router.route('/:id/participants/:userIdToRemove')
+  .delete(restrictTo('teacher', 'admin'), chatController.removeUserFromGroup);
+
+// --- Message Management ---
+
+// Any participant can get messages or send a new one.
+router.route('/:id/messages')
+  .get(restrictTo('student', 'teacher', 'admin'), chatController.getChatMessages)
+  .post(restrictTo('student', 'teacher', 'admin'), chatController.sendChatMessage);
+
+// Any participant can delete their own message. Admins/teachers can delete any message.
+// The fine-grained logic (own message vs any message) is handled in the service/controller.
+// The route just ensures a logged-in user of the correct role makes the request.
+router.route('/:id/messages/:messageId')
+  .delete(restrictTo('student', 'teacher', 'admin'), chatController.deleteChatMessage);
 
 module.exports = router;
