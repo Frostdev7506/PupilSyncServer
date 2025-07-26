@@ -10,23 +10,23 @@ router.use(protect);
 router.get('/', collaborativeProjectController.getAllProjects);
 router.get('/:id', collaborativeProjectController.getProjectById);
 router.post('/', restrictTo('admin', 'teacher'), collaborativeProjectController.createProject);
-router.patch('/:id', collaborativeProjectController.updateProject);
+router.patch('/:id', restrictTo('admin', 'teacher'), collaborativeProjectController.updateProject);
 router.delete('/:id', restrictTo('admin', 'teacher'), collaborativeProjectController.deleteProject);
 
 // Team routes
 router.get('/:projectId/teams', collaborativeProjectController.getProjectTeams);
 router.get('/teams/:id', collaborativeProjectController.getTeamById);
-router.post('/teams', collaborativeProjectController.createTeam);
-router.patch('/teams/:id', collaborativeProjectController.updateTeam);
-router.delete('/teams/:id', collaborativeProjectController.deleteTeam);
+router.post('/teams', restrictTo('student', 'teacher', 'admin'), collaborativeProjectController.createTeam);
+router.patch('/teams/:id', restrictTo('student', 'teacher', 'admin'), collaborativeProjectController.updateTeam);
+router.delete('/teams/:id', restrictTo('student', 'teacher', 'admin'), collaborativeProjectController.deleteTeam);
 
 // Team member routes
-router.post('/teams/members', collaborativeProjectController.addTeamMember);
-router.patch('/teams/members/:id', collaborativeProjectController.updateTeamMember);
-router.delete('/teams/members/:id', collaborativeProjectController.removeTeamMember);
+router.post('/teams/members', restrictTo('student', 'teacher', 'admin'), collaborativeProjectController.addTeamMember);
+router.patch('/teams/members/:id', restrictTo('student', 'teacher', 'admin'), collaborativeProjectController.updateTeamMember);
+router.delete('/teams/members/:id', restrictTo('student', 'teacher', 'admin'), collaborativeProjectController.removeTeamMember);
 
 // Team submission routes
-router.post('/teams/:id/submit', collaborativeProjectController.submitTeamProject);
+router.post('/teams/:id/submit', restrictTo('student', 'teacher', 'admin'), collaborativeProjectController.submitTeamProject);
 router.post('/teams/:id/grade', restrictTo('admin', 'teacher'), collaborativeProjectController.gradeTeamSubmission);
 
 module.exports = router;

@@ -27,19 +27,19 @@ router.delete('/:id', restrictTo('admin', 'teacher'), discussionForumController.
 router.patch('/:id/stats', restrictTo('admin', 'teacher'), discussionForumController.updateForumStats);
 
 // Topic routes
-router.post('/topics', discussionTopicController.createTopic);
-router.patch('/topics/:id', discussionTopicController.updateTopic);
-router.delete('/topics/:id', discussionTopicController.deleteTopic);
+router.post('/topics', restrictTo('student', 'teacher', 'admin'), discussionTopicController.createTopic);
+router.patch('/topics/:id', restrictTo('student', 'teacher', 'admin'), discussionTopicController.updateTopic);
+router.delete('/topics/:id', restrictTo('student', 'teacher', 'admin'), discussionTopicController.deleteTopic);
 router.patch('/topics/:id/moderate', restrictTo('admin', 'teacher'), discussionTopicController.moderateTopic);
 router.patch('/topics/:id/pin', restrictTo('admin', 'teacher'), discussionTopicController.togglePinStatus);
 router.patch('/topics/:id/lock', restrictTo('admin', 'teacher'), discussionTopicController.toggleLockStatus);
 
 // Reply routes
-router.post('/replies', discussionReplyController.createReply);
-router.patch('/replies/:id', discussionReplyController.updateReply);
-router.delete('/replies/:id', discussionReplyController.deleteReply);
+router.post('/replies', restrictTo('student', 'teacher', 'admin'), discussionReplyController.createReply);
+router.patch('/replies/:id', restrictTo('student', 'teacher', 'admin'), discussionReplyController.updateReply);
+router.delete('/replies/:id', restrictTo('student', 'teacher', 'admin'), discussionReplyController.deleteReply);
 router.patch('/replies/:id/moderate', restrictTo('admin', 'teacher'), discussionReplyController.moderateReply);
-router.patch('/replies/:id/accept', discussionReplyController.markAsAcceptedAnswer);
-router.post('/replies/:id/vote', discussionReplyController.voteOnReply);
+router.patch('/replies/:id/accept', restrictTo('student', 'teacher', 'admin'), discussionReplyController.markAsAcceptedAnswer);
+router.post('/replies/:id/vote', restrictTo('student', 'teacher', 'admin'), discussionReplyController.voteOnReply);
 
 module.exports = router;

@@ -10,11 +10,11 @@ router.use(protect);
 router.get('/:id', lessonController.getLessonById);
 
 // Update and delete lessons (authorization check in controller)
-router.patch('/:id', lessonController.updateLesson);
-router.delete('/:id', lessonController.deleteLesson);
+router.patch('/:id', restrictTo('teacher', 'admin'), lessonController.updateLesson);
+router.delete('/:id', restrictTo('teacher', 'admin'), lessonController.deleteLesson);
 
 // Learning objectives
-router.post('/:id/objectives', lessonController.addLearningObjectives);
+router.post('/:id/objectives', restrictTo('teacher', 'admin'), lessonController.addLearningObjectives);
 
 // Lesson order management
 router.patch('/course/:courseId/order', restrictTo('teacher', 'admin'), lessonController.updateLessonOrder);

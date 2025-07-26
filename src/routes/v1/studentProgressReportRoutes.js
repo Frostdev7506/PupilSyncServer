@@ -7,10 +7,10 @@ const { protect, restrictTo } = require('../../middlewares/auth');
 router.use(protect);
 
 // Routes for viewing reports
-router.get('/:id', studentProgressReportController.getReportById);
-router.get('/student/:studentId', studentProgressReportController.getStudentReports);
-router.get('/teacher/:teacherId', studentProgressReportController.getTeacherReports);
-router.get('/student/:studentId/comprehensive', studentProgressReportController.generateComprehensiveReport);
+router.get('/:id', restrictTo('student', 'parent', 'teacher', 'admin'), studentProgressReportController.getReportById);
+router.get('/student/:studentId', restrictTo('student', 'parent', 'teacher', 'admin'), studentProgressReportController.getStudentReports);
+router.get('/teacher/:teacherId', restrictTo('teacher', 'admin'), studentProgressReportController.getTeacherReports);
+router.get('/student/:studentId/comprehensive', restrictTo('student', 'parent', 'teacher', 'admin'), studentProgressReportController.generateComprehensiveReport);
 
 // Routes for managing reports (teachers and admins only)
 router.post('/', restrictTo('teacher', 'admin'), studentProgressReportController.createReport);
