@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { protect, restrictTo } = require('../../middlewares/auth');
+const protect = require('../../middlewares/auth').protect;
+const restrictTo = require('../../middlewares/auth/restrictTo');
 
 // Public route - no authentication required
 router.get('/public', (req, res) => {

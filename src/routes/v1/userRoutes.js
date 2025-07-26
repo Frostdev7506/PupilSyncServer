@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../../controllers/userController');
-const { protect, restrictTo } = require('../../middlewares/auth');
-
-// Protected routes - require authentication
-router.use(protect);
+const { protect } = require('../../middlewares/auth');
+const restrictTo = require('../../middlewares/auth/restrictTo');
 
 // Routes for authenticated users
-router.get('/me', userController.getMe);
-router.patch('/updateMe', userController.updateMe);
+router.get('/me', protect, userController.getMe);
+router.patch('/updateMe', protect, userController.updateMe);
 
 // Admin only routes
 router.get('/', restrictTo('admin'), userController.getAllUsers);

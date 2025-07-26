@@ -61,9 +61,15 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 socketManager.initialize(server);
 
-server.listen(port, () => {
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+    });
+}
+
+module.exports = app;
   logger.info(`Server running in ${config.env} mode on port ${port}`);
-});
+
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {

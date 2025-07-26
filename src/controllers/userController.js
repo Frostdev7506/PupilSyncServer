@@ -1,4 +1,5 @@
-const { Users } = require('../models/users');const AppError = require('../utils/errors/AppError');
+const { Users } = require('../models/users');
+const AppError = require('../utils/errors/AppError');
 
 /**
  * Get current user profile
@@ -27,7 +28,7 @@ exports.getMe = async (req, res, next) => {
  */
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.findAll({
+    const users = await Users.findAll({
       attributes: { exclude: ['password_hash', 'verification_token'] }
     });
 
@@ -59,7 +60,7 @@ exports.updateMe = async (req, res, next) => {
     const filteredBody = filterObj(req.body, 'first_name', 'last_name', 'email');
 
     // 3) Update user document
-    const updatedUser = await User.update(filteredBody, {
+    const updatedUser = await Users.update(filteredBody, {
       where: { user_id: req.user.user_id },
       returning: true,
       plain: true

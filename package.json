@@ -15,7 +15,7 @@
     "db:refresh": "node generate-models.js full --force",
     "db:sync": "node sync-db.js",
     "db:sync:force": "node sync-db.js --force",
-    "test": "jest --watchAll --coverage",
+    "test": "jest",
     "test:unit": "jest --runInBand \"test/unit/**/*.test.js\"",
     "test:integration": "jest test/integration/**/*.test.js",
     "test:coverage": "jest --coverage",
