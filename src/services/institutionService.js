@@ -7,9 +7,34 @@ const models = initModels(sequelize);
 const { Institutions, Teachers, Students, Classes, Courses, Users } = models;
 
 const institutionService = {
-  /**
-   * Get institution with all associations including user data
-   */
+  async createInstitution(institutionData) {
+    const transaction = await sequelize.transaction();
+    try {
+      const institution = await Institutions.create(institutionData, { transaction });
+      await transaction.commit();
+      return institution;
+    } catch (err) {
+      await transaction.rollback();
+      throw new AppError(`Error creating institution: ${err.message}`, err.status || 500);
+    }
+  },
+
+  async deleteInstitution(institutionId) {
+    const transaction = await sequelize.transaction();
+    try {
+      const institution = await Institutions.findByPk(institutionId);
+      if (!institution) {
+        throw new AppError('Institution not found', 404);
+      }
+      await institution.destroy({ transaction });
+      await transaction.commit();
+      return { message: 'Institution deleted successfully' };
+    } catch (err) {
+      await transaction.rollback();
+      throw new AppError(`Error deleting institution: ${err.message}`, err.status || 500);
+    }
+  },
+
   async getInstitutionWithAssociations(institutionId) {
     
     if (!institutionId) {

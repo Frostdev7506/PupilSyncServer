@@ -14,13 +14,13 @@ router.use(protect);
 
 // Service management (teachers only)
 router.post('/services', restrictTo('teacher'), marketplaceController.createTeacherService);
-router.patch('/services/:id', marketplaceController.updateService); // Authorization check in controller
-router.delete('/services/:id', marketplaceController.deleteService); // Authorization check in controller
+router.patch('/services/:id', restrictTo('teacher', 'admin'), marketplaceController.updateService);
+router.delete('/services/:id', restrictTo('teacher', 'admin'), marketplaceController.deleteService);
 
 // Booking management
 router.post('/services/:id/book', restrictTo('student'), marketplaceController.bookService);
-router.get('/bookings/:id', marketplaceController.getBookingById); // Authorization check in controller
-router.patch('/bookings/:id/status', marketplaceController.updateBookingStatus); // Authorization check in controller
+router.get('/bookings/:id', restrictTo('student', 'teacher', 'admin'), marketplaceController.getBookingById);
+router.patch('/bookings/:id/status', restrictTo('student', 'teacher', 'admin'), marketplaceController.updateBookingStatus);
 router.get('/bookings', marketplaceController.getUserBookings);
 
 // Teacher availability management

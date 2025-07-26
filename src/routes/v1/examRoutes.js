@@ -8,8 +8,8 @@ router.use(protect);
 
 // Exam management routes (teacher/admin only)
 router.post('/', restrictTo('teacher', 'admin'), examController.createExam);
-router.get('/', examController.getAllExams);
-router.get('/:id', examController.getExamById);
+router.get('/', restrictTo('teacher', 'admin'), examController.getAllExams);
+router.get('/:id', restrictTo('teacher', 'admin'), examController.getExamById);
 router.patch('/:id', restrictTo('teacher', 'admin'), examController.updateExam);
 router.delete('/:id', restrictTo('teacher', 'admin'), examController.deleteExam);
 

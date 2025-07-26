@@ -13,14 +13,14 @@ router.use(protect);
 
 // Routes for teachers and admins
 router.post('/', restrictTo('teacher', 'admin'), courseController.createCourse);
-router.patch('/:id', courseController.updateCourse); // Authorization check in controller
-router.delete('/:id', courseController.deleteCourse); // Authorization check in controller
+router.patch('/:id', restrictTo('teacher', 'admin'), courseController.updateCourse);
+router.delete('/:id', restrictTo('teacher', 'admin'), courseController.deleteCourse);
 
 // Course syllabus management
-router.patch('/:id/syllabus', courseController.updateCourseSyllabus);
+router.patch('/:id/syllabus', restrictTo('teacher', 'admin'), courseController.updateCourseSyllabus);
 
 // Course format management
-router.patch('/:id/format', courseController.updateCourseFormat);
+router.patch('/:id/format', restrictTo('teacher', 'admin'), courseController.updateCourseFormat);
 
 // Lesson management within courses
 router.get('/:courseId/lessons', lessonController.getLessonsByCourse);
