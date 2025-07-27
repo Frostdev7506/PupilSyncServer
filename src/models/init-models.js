@@ -56,7 +56,9 @@ var _TeacherEarnings = require("./teacherEarnings"); // Moved TeacherEarnings im
 var _TeacherInstitutions = require("./teacherInstitutions"); // Moved TeacherInstitutions import
 var _TeacherProfiles = require("./teacherProfiles"); // Moved TeacherProfiles import
 var _TeacherReviews = require("./teacherReviews"); // Moved TeacherReviews import
-
+var _PricingPlan = require("./pricingPlan");
+var _PricingPlanFeature = require("./pricingPlanFeature");
+var _FAQ = require("./faq");
 
 function initModels(sequelize) {
   var SequelizeMeta = _SequelizeMeta(sequelize, DataTypes);
@@ -117,176 +119,431 @@ function initModels(sequelize) {
   var TeacherProfiles = _TeacherProfiles(sequelize, DataTypes); // Moved TeacherProfiles initialization
   var TeacherReviews = _TeacherReviews(sequelize, DataTypes); // Moved TeacherReviews initialization
 
+  var PricingPlan = _PricingPlan(sequelize, DataTypes);
+  var PricingPlanFeature = _PricingPlanFeature(sequelize, DataTypes);
+  var FAQ = _FAQ(sequelize, DataTypes);
 
   // Quiz System Associations
-  Quizzes.hasMany(QuizQuestions, { foreignKey: 'quizId', as: 'questions' });
-  QuizQuestions.belongsTo(Quizzes, { foreignKey: 'quizId', as: 'quiz' });
+  Quizzes.hasMany(QuizQuestions, { foreignKey: "quizId", as: "questions" });
+  QuizQuestions.belongsTo(Quizzes, { foreignKey: "quizId", as: "quiz" });
 
-  QuizQuestions.hasMany(QuizAnswers, { foreignKey: 'questionId', as: 'answers' });
-  QuizAnswers.belongsTo(QuizQuestions, { foreignKey: 'questionId', as: 'question' });
+  QuizQuestions.hasMany(QuizAnswers, {
+    foreignKey: "questionId",
+    as: "answers",
+  });
+  QuizAnswers.belongsTo(QuizQuestions, {
+    foreignKey: "questionId",
+    as: "question",
+  });
 
-  Quizzes.hasMany(StudentQuizAttempts, { foreignKey: 'quizId', as: 'attempts' });
-  StudentQuizAttempts.belongsTo(Quizzes, { foreignKey: 'quizId', as: 'quiz' });
+  Quizzes.hasMany(StudentQuizAttempts, {
+    foreignKey: "quizId",
+    as: "attempts",
+  });
+  StudentQuizAttempts.belongsTo(Quizzes, { foreignKey: "quizId", as: "quiz" });
 
-  StudentQuizAttempts.hasMany(StudentQuizResponses, { foreignKey: 'attemptId', as: 'responses' });
-  StudentQuizResponses.belongsTo(StudentQuizAttempts, { foreignKey: 'attemptId', as: 'attempt' });
+  StudentQuizAttempts.hasMany(StudentQuizResponses, {
+    foreignKey: "attemptId",
+    as: "responses",
+  });
+  StudentQuizResponses.belongsTo(StudentQuizAttempts, {
+    foreignKey: "attemptId",
+    as: "attempt",
+  });
 
-  QuizQuestions.hasMany(StudentQuizResponses, { foreignKey: 'questionId', as: 'responses' });
-  StudentQuizResponses.belongsTo(QuizQuestions, { foreignKey: 'questionId', as: 'question' });
+  QuizQuestions.hasMany(StudentQuizResponses, {
+    foreignKey: "questionId",
+    as: "responses",
+  });
+  StudentQuizResponses.belongsTo(QuizQuestions, {
+    foreignKey: "questionId",
+    as: "question",
+  });
 
-  QuizAnswers.hasMany(StudentQuizResponses, { foreignKey: 'chosenAnswerId', as: 'responses' });
-  StudentQuizResponses.belongsTo(QuizAnswers, { foreignKey: 'chosenAnswerId', as: 'chosenAnswer' });
+  QuizAnswers.hasMany(StudentQuizResponses, {
+    foreignKey: "chosenAnswerId",
+    as: "responses",
+  });
+  StudentQuizResponses.belongsTo(QuizAnswers, {
+    foreignKey: "chosenAnswerId",
+    as: "chosenAnswer",
+  });
 
   // Course System Associations
-  Courses.hasMany(Lessons, { foreignKey: 'courseId', as: 'lessons' });
-  Lessons.belongsTo(Courses, { foreignKey: 'courseId', as: 'course' });
+  Courses.hasMany(Lessons, { foreignKey: "courseId", as: "lessons" });
+  Lessons.belongsTo(Courses, { foreignKey: "courseId", as: "course" });
 
-  Courses.hasMany(Quizzes, { foreignKey: 'courseId', as: 'quizzes' });
-  Quizzes.belongsTo(Courses, { foreignKey: 'courseId', as: 'course' });
+  Courses.hasMany(Quizzes, { foreignKey: "courseId", as: "quizzes" });
+  Quizzes.belongsTo(Courses, { foreignKey: "courseId", as: "course" });
 
-  Lessons.hasMany(Quizzes, { foreignKey: 'lessonId', as: 'quizzes' });
-  Quizzes.belongsTo(Lessons, { foreignKey: 'lessonId', as: 'lesson' });
+  Lessons.hasMany(Quizzes, { foreignKey: "lessonId", as: "quizzes" });
+  Quizzes.belongsTo(Lessons, { foreignKey: "lessonId", as: "lesson" });
 
   // Institution and Teacher Associations
-  Teachers.belongsTo(Institutions, { foreignKey: 'institutionId', as: 'institution' });
-  Institutions.hasMany(Teachers, { foreignKey: 'institutionId', as: 'teachers' });
+  Teachers.belongsTo(Institutions, {
+    foreignKey: "institutionId",
+    as: "institution",
+  });
+  Institutions.hasMany(Teachers, {
+    foreignKey: "institutionId",
+    as: "teachers",
+  });
 
   // Course-Teacher-Institution Associations
-  Courses.belongsTo(Teachers, { foreignKey: 'teacherId', as: 'teacher' });
-  Teachers.hasMany(Courses, { foreignKey: 'teacherId', as: 'courses' });
+  Courses.belongsTo(Teachers, { foreignKey: "teacherId", as: "teacher" });
+  Teachers.hasMany(Courses, { foreignKey: "teacherId", as: "courses" });
 
-  Courses.belongsTo(Institutions, { foreignKey: 'institutionId', as: 'institution' });
-  Institutions.hasMany(Courses, { foreignKey: 'institutionId', as: 'courses' });
+  Courses.belongsTo(Institutions, {
+    foreignKey: "institutionId",
+    as: "institution",
+  });
+  Institutions.hasMany(Courses, { foreignKey: "institutionId", as: "courses" });
 
   // Exam Student Assignment Associations
-  ExamStudentAssignments.belongsTo(Exams, { foreignKey: 'examId', as: 'exam' });
-  Exams.hasMany(ExamStudentAssignments, { foreignKey: 'examId', as: 'studentAssignments' });
+  ExamStudentAssignments.belongsTo(Exams, { foreignKey: "examId", as: "exam" });
+  Exams.hasMany(ExamStudentAssignments, {
+    foreignKey: "examId",
+    as: "studentAssignments",
+  });
 
-  ExamStudentAssignments.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
-  Students.hasMany(ExamStudentAssignments, { foreignKey: 'studentId', as: 'examAssignments' });
+  ExamStudentAssignments.belongsTo(Students, {
+    foreignKey: "studentId",
+    as: "student",
+  });
+  Students.hasMany(ExamStudentAssignments, {
+    foreignKey: "studentId",
+    as: "examAssignments",
+  });
 
   // Exam Student Assignment to User (assignedBy)
-  ExamStudentAssignments.belongsTo(Users, { foreignKey: 'assignedById', as: 'assignedBy' });
-  Users.hasMany(ExamStudentAssignments, { foreignKey: 'assignedById', as: 'assignedExamAssignments' });
+  ExamStudentAssignments.belongsTo(Users, {
+    foreignKey: "assignedById",
+    as: "assignedBy",
+  });
+  Users.hasMany(ExamStudentAssignments, {
+    foreignKey: "assignedById",
+    as: "assignedExamAssignments",
+  });
 
   // Student Exam Responses Associations
-  StudentExamResponses.belongsTo(ExamStudentAssignments, { foreignKey: 'attemptId', as: 'attempt' });
-  ExamStudentAssignments.hasMany(StudentExamResponses, { foreignKey: 'attemptId', as: 'responses' });
+  StudentExamResponses.belongsTo(ExamStudentAssignments, {
+    foreignKey: "attemptId",
+    as: "attempt",
+  });
+  ExamStudentAssignments.hasMany(StudentExamResponses, {
+    foreignKey: "attemptId",
+    as: "responses",
+  });
 
-  StudentExamResponses.belongsTo(ExamQuestions, { foreignKey: 'questionId', as: 'question' });
-  ExamQuestions.hasMany(StudentExamResponses, { foreignKey: 'questionId', as: 'responses' });
+  StudentExamResponses.belongsTo(ExamQuestions, {
+    foreignKey: "questionId",
+    as: "question",
+  });
+  ExamQuestions.hasMany(StudentExamResponses, {
+    foreignKey: "questionId",
+    as: "responses",
+  });
 
   // Add associations for newly added models (inferred)
-  Students.hasMany(Attendance, { foreignKey: 'studentId', as: 'attendanceRecords' });
-  Attendance.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
-  Classes.hasMany(Attendance, { foreignKey: 'classId', as: 'attendanceRecords' });
-  Attendance.belongsTo(Classes, { foreignKey: 'classId', as: 'class' });
-  Courses.hasMany(Attendance, { foreignKey: 'courseId', as: 'attendanceRecords' });
-  Attendance.belongsTo(Courses, { foreignKey: 'courseId', as: 'course' });
+  Students.hasMany(Attendance, {
+    foreignKey: "studentId",
+    as: "attendanceRecords",
+  });
+  Attendance.belongsTo(Students, { foreignKey: "studentId", as: "student" });
+  Classes.hasMany(Attendance, {
+    foreignKey: "classId",
+    as: "attendanceRecords",
+  });
+  Attendance.belongsTo(Classes, { foreignKey: "classId", as: "class" });
+  Courses.hasMany(Attendance, {
+    foreignKey: "courseId",
+    as: "attendanceRecords",
+  });
+  Attendance.belongsTo(Courses, { foreignKey: "courseId", as: "course" });
 
-  Students.hasMany(ClassEnrollments, { foreignKey: 'studentId', as: 'classEnrollments' });
-  ClassEnrollments.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
-  Classes.hasMany(ClassEnrollments, { foreignKey: 'classId', as: 'enrollments' });
-  ClassEnrollments.belongsTo(Classes, { foreignKey: 'classId', as: 'class' });
+  Students.hasMany(ClassEnrollments, {
+    foreignKey: "studentId",
+    as: "classEnrollments",
+  });
+  ClassEnrollments.belongsTo(Students, {
+    foreignKey: "studentId",
+    as: "student",
+  });
+  Classes.hasMany(ClassEnrollments, {
+    foreignKey: "classId",
+    as: "enrollments",
+  });
+  ClassEnrollments.belongsTo(Classes, { foreignKey: "classId", as: "class" });
 
-  ContentBlocks.hasMany(ContentEngagements, { foreignKey: 'contentBlockId', as: 'engagements' });
-  ContentEngagements.belongsTo(ContentBlocks, { foreignKey: 'contentBlockId', as: 'contentBlock' });
-  Students.hasMany(ContentEngagements, { foreignKey: 'studentId', as: 'contentEngagements' });
-  ContentEngagements.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
+  ContentBlocks.hasMany(ContentEngagements, {
+    foreignKey: "contentBlockId",
+    as: "engagements",
+  });
+  ContentEngagements.belongsTo(ContentBlocks, {
+    foreignKey: "contentBlockId",
+    as: "contentBlock",
+  });
+  Students.hasMany(ContentEngagements, {
+    foreignKey: "studentId",
+    as: "contentEngagements",
+  });
+  ContentEngagements.belongsTo(Students, {
+    foreignKey: "studentId",
+    as: "student",
+  });
 
-  Courses.hasMany(CourseReviews, { foreignKey: 'courseId', as: 'reviews' });
-  CourseReviews.belongsTo(Courses, { foreignKey: 'courseId', as: 'course' });
-  Students.hasMany(CourseReviews, { foreignKey: 'studentId', as: 'courseReviews' });
-  CourseReviews.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
+  Courses.hasMany(CourseReviews, { foreignKey: "courseId", as: "reviews" });
+  CourseReviews.belongsTo(Courses, { foreignKey: "courseId", as: "course" });
+  Students.hasMany(CourseReviews, {
+    foreignKey: "studentId",
+    as: "courseReviews",
+  });
+  CourseReviews.belongsTo(Students, { foreignKey: "studentId", as: "student" });
 
-  Courses.hasMany(DiscussionForums, { foreignKey: 'courseId', as: 'discussionForums' });
-  DiscussionForums.belongsTo(Courses, { foreignKey: 'courseId', as: 'course' });
-  DiscussionForums.hasMany(DiscussionTopics, { foreignKey: 'forumId', as: 'topics' });
-  DiscussionTopics.belongsTo(DiscussionForums, { foreignKey: 'forumId', as: 'forum' });
-  DiscussionTopics.hasMany(DiscussionReplies, { foreignKey: 'topicId', as: 'replies' });
-  DiscussionReplies.belongsTo(DiscussionTopics, { foreignKey: 'topicId', as: 'topic' });
-  Users.hasMany(DiscussionTopics, { foreignKey: 'authorId', as: 'discussionTopics' });
-  DiscussionTopics.belongsTo(Users, { foreignKey: 'authorId', as: 'author' });
-  Users.hasMany(DiscussionReplies, { foreignKey: 'authorId', as: 'discussionReplies' });
-  DiscussionReplies.belongsTo(Users, { foreignKey: 'authorId', as: 'author' });
+  Courses.hasMany(DiscussionForums, {
+    foreignKey: "courseId",
+    as: "discussionForums",
+  });
+  DiscussionForums.belongsTo(Courses, { foreignKey: "courseId", as: "course" });
+  DiscussionForums.hasMany(DiscussionTopics, {
+    foreignKey: "forumId",
+    as: "topics",
+  });
+  DiscussionTopics.belongsTo(DiscussionForums, {
+    foreignKey: "forumId",
+    as: "forum",
+  });
+  DiscussionTopics.hasMany(DiscussionReplies, {
+    foreignKey: "topicId",
+    as: "replies",
+  });
+  DiscussionReplies.belongsTo(DiscussionTopics, {
+    foreignKey: "topicId",
+    as: "topic",
+  });
+  Users.hasMany(DiscussionTopics, {
+    foreignKey: "authorId",
+    as: "discussionTopics",
+  });
+  DiscussionTopics.belongsTo(Users, { foreignKey: "authorId", as: "author" });
+  Users.hasMany(DiscussionReplies, {
+    foreignKey: "authorId",
+    as: "discussionReplies",
+  });
+  DiscussionReplies.belongsTo(Users, { foreignKey: "authorId", as: "author" });
 
-  Courses.hasMany(Enrollments, { foreignKey: 'courseId', as: 'enrollments' });
-  Enrollments.belongsTo(Courses, { foreignKey: 'courseId', as: 'course' });
-  Students.hasMany(Enrollments, { foreignKey: 'studentId', as: 'enrollments' });
-  Enrollments.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
+  Courses.hasMany(Enrollments, { foreignKey: "courseId", as: "enrollments" });
+  Enrollments.belongsTo(Courses, { foreignKey: "courseId", as: "course" });
+  Students.hasMany(Enrollments, { foreignKey: "studentId", as: "enrollments" });
+  Enrollments.belongsTo(Students, { foreignKey: "studentId", as: "student" });
 
-  Users.hasMany(OtpCodes, { foreignKey: 'userId', as: 'otpCodes' });
-  OtpCodes.belongsTo(Users, { foreignKey: 'userId', as: 'user' });
+  Users.hasMany(OtpCodes, { foreignKey: "userId", as: "otpCodes" });
+  OtpCodes.belongsTo(Users, { foreignKey: "userId", as: "user" });
 
-  Parents.hasMany(ParentAccessSettings, { foreignKey: 'parentId', as: 'accessSettings' });
-  ParentAccessSettings.belongsTo(Parents, { foreignKey: 'parentId', as: 'parent' });
-  Students.hasMany(ParentAccessSettings, { foreignKey: 'studentId', as: 'parentAccessSettings' });
-  ParentAccessSettings.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
+  Parents.hasMany(ParentAccessSettings, {
+    foreignKey: "parentId",
+    as: "accessSettings",
+  });
+  ParentAccessSettings.belongsTo(Parents, {
+    foreignKey: "parentId",
+    as: "parent",
+  });
+  Students.hasMany(ParentAccessSettings, {
+    foreignKey: "studentId",
+    as: "parentAccessSettings",
+  });
+  ParentAccessSettings.belongsTo(Students, {
+    foreignKey: "studentId",
+    as: "student",
+  });
 
-  CollaborativeProjects.hasMany(ProjectTeams, { foreignKey: 'projectId', as: 'teams' });
-  ProjectTeams.belongsTo(CollaborativeProjects, { foreignKey: 'projectId', as: 'project' });
-  ProjectTeams.hasMany(ProjectTeamMembers, { foreignKey: 'teamId', as: 'members' });
-  ProjectTeamMembers.belongsTo(ProjectTeams, { foreignKey: 'teamId', as: 'team' });
-  Students.hasMany(ProjectTeamMembers, { foreignKey: 'studentId', as: 'projectTeamMembers' });
-  ProjectTeamMembers.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
+  CollaborativeProjects.hasMany(ProjectTeams, {
+    foreignKey: "projectId",
+    as: "teams",
+  });
+  ProjectTeams.belongsTo(CollaborativeProjects, {
+    foreignKey: "projectId",
+    as: "project",
+  });
+  ProjectTeams.hasMany(ProjectTeamMembers, {
+    foreignKey: "teamId",
+    as: "members",
+  });
+  ProjectTeamMembers.belongsTo(ProjectTeams, {
+    foreignKey: "teamId",
+    as: "team",
+  });
+  Students.hasMany(ProjectTeamMembers, {
+    foreignKey: "studentId",
+    as: "projectTeamMembers",
+  });
+  ProjectTeamMembers.belongsTo(Students, {
+    foreignKey: "studentId",
+    as: "student",
+  });
 
-  Assignments.hasMany(AssignmentRubrics, { foreignKey: 'assignmentId', as: 'rubrics' });
-  AssignmentRubrics.belongsTo(Assignments, { foreignKey: 'assignmentId', as: 'assignment' });
-  AssignmentRubrics.hasMany(RubricCriteria, { foreignKey: 'rubricId', as: 'criteria' });
-  RubricCriteria.belongsTo(AssignmentRubrics, { foreignKey: 'rubricId', as: 'rubric' });
-  RubricCriteria.hasMany(RubricScores, { foreignKey: 'criteriaId', as: 'scores' });
-  RubricScores.belongsTo(RubricCriteria, { foreignKey: 'criteriaId', as: 'criteria' });
-  Submissions.hasMany(RubricScores, { foreignKey: 'submissionId', as: 'rubricScores' });
-  RubricScores.belongsTo(Submissions, { foreignKey: 'submissionId', as: 'submission' });
+  Assignments.hasMany(AssignmentRubrics, {
+    foreignKey: "assignmentId",
+    as: "rubrics",
+  });
+  AssignmentRubrics.belongsTo(Assignments, {
+    foreignKey: "assignmentId",
+    as: "assignment",
+  });
+  AssignmentRubrics.hasMany(RubricCriteria, {
+    foreignKey: "rubricId",
+    as: "criteria",
+  });
+  RubricCriteria.belongsTo(AssignmentRubrics, {
+    foreignKey: "rubricId",
+    as: "rubric",
+  });
+  RubricCriteria.hasMany(RubricScores, {
+    foreignKey: "criteriaId",
+    as: "scores",
+  });
+  RubricScores.belongsTo(RubricCriteria, {
+    foreignKey: "criteriaId",
+    as: "criteria",
+  });
+  Submissions.hasMany(RubricScores, {
+    foreignKey: "submissionId",
+    as: "rubricScores",
+  });
+  RubricScores.belongsTo(Submissions, {
+    foreignKey: "submissionId",
+    as: "submission",
+  });
 
-  Students.hasMany(StudentProgressReports, { foreignKey: 'studentId', as: 'progressReports' });
-  StudentProgressReports.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
-  Teachers.hasMany(StudentProgressReports, { foreignKey: 'teacherId', as: 'authoredProgressReports' });
-  StudentProgressReports.belongsTo(Teachers, { foreignKey: 'teacherId', as: 'teacher' });
-  Courses.hasMany(StudentProgressReports, { foreignKey: 'courseId', as: 'progressReports' });
-  StudentProgressReports.belongsTo(Courses, { foreignKey: 'courseId', as: 'course' });
-  Classes.hasMany(StudentProgressReports, { foreignKey: 'classId', as: 'progressReports' });
-  StudentProgressReports.belongsTo(Classes, { foreignKey: 'classId', as: 'class' });
+  Students.hasMany(StudentProgressReports, {
+    foreignKey: "studentId",
+    as: "progressReports",
+  });
+  StudentProgressReports.belongsTo(Students, {
+    foreignKey: "studentId",
+    as: "student",
+  });
+  Teachers.hasMany(StudentProgressReports, {
+    foreignKey: "teacherId",
+    as: "authoredProgressReports",
+  });
+  StudentProgressReports.belongsTo(Teachers, {
+    foreignKey: "teacherId",
+    as: "teacher",
+  });
+  Courses.hasMany(StudentProgressReports, {
+    foreignKey: "courseId",
+    as: "progressReports",
+  });
+  StudentProgressReports.belongsTo(Courses, {
+    foreignKey: "courseId",
+    as: "course",
+  });
+  Classes.hasMany(StudentProgressReports, {
+    foreignKey: "classId",
+    as: "progressReports",
+  });
+  StudentProgressReports.belongsTo(Classes, {
+    foreignKey: "classId",
+    as: "class",
+  });
 
-  Submissions.hasMany(SubmissionAttachments, { foreignKey: 'submissionId', as: 'attachments' });
-  SubmissionAttachments.belongsTo(Submissions, { foreignKey: 'submissionId', as: 'submission' });
-  Assignments.hasMany(Submissions, { foreignKey: 'assignmentId', as: 'submissions' });
-  Submissions.belongsTo(Assignments, { foreignKey: 'assignmentId', as: 'assignment' });
-  Students.hasMany(Submissions, { foreignKey: 'studentId', as: 'submissions' });
-  Submissions.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
+  Submissions.hasMany(SubmissionAttachments, {
+    foreignKey: "submissionId",
+    as: "attachments",
+  });
+  SubmissionAttachments.belongsTo(Submissions, {
+    foreignKey: "submissionId",
+    as: "submission",
+  });
+  Assignments.hasMany(Submissions, {
+    foreignKey: "assignmentId",
+    as: "submissions",
+  });
+  Submissions.belongsTo(Assignments, {
+    foreignKey: "assignmentId",
+    as: "assignment",
+  });
+  Students.hasMany(Submissions, { foreignKey: "studentId", as: "submissions" });
+  Submissions.belongsTo(Students, { foreignKey: "studentId", as: "student" });
 
-  Teachers.hasMany(TeacherEarnings, { foreignKey: 'teacherId', as: 'earnings' });
-  TeacherEarnings.belongsTo(Teachers, { foreignKey: 'teacherId', as: 'teacher' });
-  Courses.hasMany(TeacherEarnings, { foreignKey: 'courseId', as: 'teacherEarnings' });
-  TeacherEarnings.belongsTo(Courses, { foreignKey: 'courseId', as: 'course' });
+  Teachers.hasMany(TeacherEarnings, {
+    foreignKey: "teacherId",
+    as: "earnings",
+  });
+  TeacherEarnings.belongsTo(Teachers, {
+    foreignKey: "teacherId",
+    as: "teacher",
+  });
+  Courses.hasMany(TeacherEarnings, {
+    foreignKey: "courseId",
+    as: "teacherEarnings",
+  });
+  TeacherEarnings.belongsTo(Courses, { foreignKey: "courseId", as: "course" });
 
-  Teachers.hasMany(TeacherInstitutions, { foreignKey: 'teacherId', as: 'institutionLinks' });
-  TeacherInstitutions.belongsTo(Teachers, { foreignKey: 'teacherId', as: 'teacher' });
-  Institutions.hasMany(TeacherInstitutions, { foreignKey: 'institutionId', as: 'teacherLinks' });
-  TeacherInstitutions.belongsTo(Institutions, { foreignKey: 'institutionId', as: 'institution' });
+  Teachers.hasMany(TeacherInstitutions, {
+    foreignKey: "teacherId",
+    as: "institutionLinks",
+  });
+  TeacherInstitutions.belongsTo(Teachers, {
+    foreignKey: "teacherId",
+    as: "teacher",
+  });
+  Institutions.hasMany(TeacherInstitutions, {
+    foreignKey: "institutionId",
+    as: "teacherLinks",
+  });
+  TeacherInstitutions.belongsTo(Institutions, {
+    foreignKey: "institutionId",
+    as: "institution",
+  });
 
-  Teachers.hasOne(TeacherProfiles, { foreignKey: 'teacherId', as: 'profile' });
-  TeacherProfiles.belongsTo(Teachers, { foreignKey: 'teacherId', as: 'teacher' });
+  Teachers.hasOne(TeacherProfiles, { foreignKey: "teacherId", as: "profile" });
+  TeacherProfiles.belongsTo(Teachers, {
+    foreignKey: "teacherId",
+    as: "teacher",
+  });
 
-  Teachers.hasMany(TeacherReviews, { foreignKey: 'teacherId', as: 'reviews' });
-  TeacherReviews.belongsTo(Teachers, { foreignKey: 'teacherId', as: 'teacher' });
-  Students.hasMany(TeacherReviews, { foreignKey: 'studentId', as: 'teacherReviews' });
-  TeacherReviews.belongsTo(Students, { foreignKey: 'studentId', as: 'student' });
-  Courses.hasMany(TeacherReviews, { foreignKey: 'courseId', as: 'teacherReviews' });
-  TeacherReviews.belongsTo(Courses, { foreignKey: 'courseId', as: 'course' });
+  Teachers.hasMany(TeacherReviews, { foreignKey: "teacherId", as: "reviews" });
+  TeacherReviews.belongsTo(Teachers, {
+    foreignKey: "teacherId",
+    as: "teacher",
+  });
+  Students.hasMany(TeacherReviews, {
+    foreignKey: "studentId",
+    as: "teacherReviews",
+  });
+  TeacherReviews.belongsTo(Students, {
+    foreignKey: "studentId",
+    as: "student",
+  });
+  Courses.hasMany(TeacherReviews, {
+    foreignKey: "courseId",
+    as: "teacherReviews",
+  });
+  TeacherReviews.belongsTo(Courses, { foreignKey: "courseId", as: "course" });
+
+  // Pricing Plan Associations
+  PricingPlan.hasMany(PricingPlanFeature, {
+    foreignKey: "pricingPlanId",
+    as: "features",
+  });
+  PricingPlanFeature.belongsTo(PricingPlan, {
+    foreignKey: "pricingPlanId",
+    as: "pricingPlan",
+  });
 
   // User associations (inferred)
-  Users.hasOne(Students, { foreignKey: 'userId', as: 'student' });
-  Students.belongsTo(Users, { foreignKey: 'userId', as: 'user' });
-  Users.hasOne(Teachers, { foreignKey: 'userId', as: 'teacher' });
-  Teachers.belongsTo(Users, { foreignKey: 'userId', as: 'user' });
-  Users.hasOne(Admins, { foreignKey: 'userId', as: 'admin' });
-  Admins.belongsTo(Users, { foreignKey: 'userId', as: 'user' });
-  Users.hasOne(Parents, { foreignKey: 'userId', as: 'parent' });
-  Parents.belongsTo(Users, { foreignKey: 'userId', as: 'user' });
-  Users.hasOne(Institutions, { foreignKey: 'userId', as: 'institution' });
-  Institutions.belongsTo(Users, { foreignKey: 'userId', as: 'user' });
-
+  Users.hasOne(Students, { foreignKey: "userId", as: "student" });
+  Students.belongsTo(Users, { foreignKey: "userId", as: "user" });
+  Users.hasOne(Teachers, { foreignKey: "userId", as: "teacher" });
+  Teachers.belongsTo(Users, { foreignKey: "userId", as: "user" });
+  Users.hasOne(Admins, { foreignKey: "userId", as: "admin" });
+  Admins.belongsTo(Users, { foreignKey: "userId", as: "user" });
+  Users.hasOne(Parents, { foreignKey: "userId", as: "parent" });
+  Parents.belongsTo(Users, { foreignKey: "userId", as: "user" });
+  Users.hasOne(Institutions, { foreignKey: "userId", as: "institution" });
+  Institutions.belongsTo(Users, { foreignKey: "userId", as: "user" });
 
   return {
     SequelizeMeta,
@@ -349,6 +606,10 @@ function initModels(sequelize) {
     TeacherInstitutions,
     TeacherProfiles,
     TeacherReviews,
+
+    PricingPlan,
+    PricingPlanFeature,
+    FAQ,
   };
 }
 module.exports = initModels;
