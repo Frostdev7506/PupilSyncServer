@@ -10,6 +10,7 @@ const quizRoutes = require("./quizRoutes");
 const pollRoutes = require("./pollRoutes");
 const surveyRoutes = require("./surveyRoutes");
 const assignmentRoutes = require("./assignmentRoutes");
+const { db } = require("../../config/db");
 
 // Teacher features
 const teacherProfileRoutes = require("./teacherProfileRoutes");

@@ -1,6 +1,19 @@
-const PricingPlan = require("../models/pricingPlan.js");
-const FAQ = require("../models/faq.js");
+const { db } = require("../config/db");
 const { Op } = require("sequelize");
+
+// NOW, LOG THE ENTIRE OBJECT AND ITS KEYS TO THE CONSOLE
+console.log("--- DEBUGGING DATABASE EXPORT ---");
+console.log("Is the db object defined?", !!db);
+console.log("What are the keys on the db object?", Object.keys(db));
+console.log("--- END DEBUG ---");
+
+// Then, do the destructuring from the object we just logged
+const { PricingPlan, FAQ } = db;
+
+// Log the variable one more time to be certain
+console.log("Is PricingPlan defined after destructuring?", PricingPlan);
+
+// --- END OF DEBUG CODE ---
 
 /**
  * Get pricing data and FAQs for a specific entity type
@@ -43,7 +56,7 @@ const getPricingData = async (req, res, next) => {
     const response = {
       entityType,
       pricingPlans: pricingPlans.map((plan) => ({
-        id: plan.id,
+        // id: plan.id,
         name: plan.name,
         price: {
           monthly: parseFloat(plan.priceMonthly),
@@ -52,7 +65,7 @@ const getPricingData = async (req, res, next) => {
         description: plan.description,
         features: plan.features.map((f) => f.feature),
         recommended: plan.isRecommended,
-        isActive: plan.isActive,
+        // isActive: plan.isActive,
       })),
       faqs: faqs.map((faq) => ({
         id: faq.id,
@@ -114,7 +127,7 @@ const getAllPricingData = async (req, res, next) => {
     // Format pricing plans
     pricingPlans.forEach((plan) => {
       result[plan.entityType].pricingPlans.push({
-        id: plan.id,
+        // id: plan.id,
         name: plan.name,
         price: {
           monthly: parseFloat(plan.priceMonthly),
@@ -123,7 +136,7 @@ const getAllPricingData = async (req, res, next) => {
         description: plan.description,
         features: plan.features.map((f) => f.feature),
         recommended: plan.isRecommended,
-        isActive: plan.isActive,
+        // isActive: plan.isActive,
       });
     });
 
