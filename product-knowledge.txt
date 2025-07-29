@@ -1,0 +1,141 @@
+Pupil Sync Knowledge Base
+Product Name: Pupil Sync
+Product Category: SaaS (Software as a Service) EdTech Platform. Specifically, a collaborative learning platform designed for teachers, students, and parents.
+Core Purpose/Mission: To transform education by empowering teachers, actively engaging students, and seamlessly connecting parents within an effective and personalized learning environment. Pupil Sync aims to modernize education delivery and consumption.
+Key User Groups & Roles:
+Teachers: Educators who create courses, manage content, interact with students, track progress, and potentially freelance their expertise.
+Students: Learners who access courses, consume content, participate in activities, submit assignments, and collaborate with peers.
+Parents: Guardians who monitor their child's progress, communicate with teachers, and contribute to their child's learning journey.
+Administrators: Individuals responsible for platform management, user administration, and overall system health.
+Core Features & Functionality:
+Course Management (Teachers):
+Course Creation: Creating new courses with titles, descriptions, and syllabi.
+Content Management: Uploading and organizing various content formats (text, video, images, audio, quizzes, assignments, discussion forums).
+Lesson Creation: Creating individual lessons within courses, defining learning objectives, and linking to content resources.
+Content Editing: Editing and deleting existing courses and content.
+Assessment Creation (Teachers):
+Quizzes: Creating multiple-choice, true/false, and short answer quizzes.
+Assignments: Creating assignments with due dates and optional file uploads.
+Grading Rubrics: Defining grading rubrics for assignments.
+Student Interaction & Communication:
+Moderated Group Chat: Providing a group chat feature within each course for student-teacher interaction and collaboration.
+Private Messaging: Allowing teachers to send private messages to individual students.
+Announcements: Enabling teachers to send announcements to the entire class or specific groups.
+Notifications: Providing teachers and students with notifications for new messages, assignment submissions, and other relevant activities.
+Student Progress Tracking & Feedback:
+Progress Viewing: Allowing teachers to view the progress of individual students on quizzes and assignments.
+Overall Course Progress: Displaying a student's overall course progress.
+Feedback: Providing written and/or audio feedback on assignments and quizzes.
+Grading: Assigning grades to assignments and quizzes using customizable grading scales.
+Freelancing and Professional Profile (Teachers):
+Profile Creation: Creating and maintaining a professional profile showcasing expertise, experience, and qualifications.
+Rate Setting: Setting own rates for courses (if applicable in a future monetization model).
+Schedule Management: Managing schedule and availability.
+Course Access and Enrollment (Students):
+Course Browsing: Browsing and searching for available courses.
+Course Information: Viewing course descriptions and syllabi.
+Enrollment: Enrolling in relevant courses.
+Content Consumption and Activities (Students):
+Accessing course materials in various formats (text, videos, images, audio).
+Participating in interactive activities such as quizzes and discussion forums.
+Viewing lessons and associated learning objectives.
+Assignment Submission and Tracking (Students):
+Viewing pending assignments and due dates.
+Submitting assignments (including file uploads if required).
+Tracking the status and progress of submitted work.
+Communication and Collaboration (Students):
+Participating in the moderated group chat within enrolled courses.
+Sending and receiving private messages from their teachers.
+Notification System: Receiving notification for new messages, announcements and graded assignments
+Personalized Learning (Students):
+Individualized Feedback: receiving individualized feedback on quizzes and assignments from teachers
+Recommendations: Tailored recommendations for practice questions and learning resources based on the student's performance.
+Student profile management:
+The students can manage their account setting and update their personal information
+View their progress across all enrolled courses on a dedicated dashboard
+Student Progress Monitoring (Parents):
+Viewing child's attendance in enrolled courses.
+Viewing child's performance on assessments (quizzes and assignments).
+Viewing child's overall progress in each enrolled course.
+Communication with Teachers (Parents):
+Sending messages to child's teachers.
+Receiving updates and messages from teachers regarding child's progress and activities.
+Contribution to Learning (Parents):
+Recommending practice questions to their child based on their observed needs and areas for improvement.
+Parental Control (Parents):
+* Options for the parents to manage their child access to certain features based on their age or learning level
+Technical Architecture:
+Three-Tier Architecture: Presentation Tier (Client Tier), Application Tier (Business Logic/Logic Tier), Data Tier.
+Presentation Tier: React Web App (Teachers/Admins) and React Native App (Students).
+Application Tier: Node.js backend with Express.js framework.
+Data Tier: PostgreSQL relational database.
+Key Technologies:
+Frontend: React, React Native
+Backend: Node.js, Express.js
+Database: PostgreSQL
+Other: Npm, ReactJs,MySQL, Express
+Cloud: AWS
+Security Measures:
+Secure user authentication (JWT).
+Encryption of sensitive data (HTTPS/SSL/TLS).
+Protection against common web vulnerabilities (SQL injection, XSS).
+Data privacy compliance (FERPA, GDPR).
+Robust access controls based on user roles.
+Underlying infrostruture secure
+Reports:
+Student Progress Reports
+Teacher Course Reports
+Teacher Earnings Reports (for freelance teachers)
+Admin Platform Usage Reports
+Attendance Reports
+Course Engagement Reports
+Assessment Performance Reports (Detailed)
+Future Enhancements (Potential):
+Interactive multimedia content.
+Content marketplace for teachers.
+Advanced gamification features (leaderboards, badges, rewards).
+AI-powered personalized learning.
+VR/AR learning experiences.
+Additional communication and collaboration features.
+Integration with external systems (SIS, LTI).
+Enhanced analytics and reporting.
+Mobile application parity.
+Offline Access
+Target Audience:
+K-12 Schools
+Higher Education Institutions
+Individual Teachers/Educators
+Students
+Parents
+Competitive Advantages (Potential):
+Collaborative ecosystem approach.
+Freelancing platform for teachers.
+Parental involvement features.
+Focus on personalization and student engagement.
+Adaptable architecture for future technology integration.
+Glossary (Key Terms):
+API (Application Programming Interface)
+Backend
+CRUD (Create, Read, Update, Delete)
+EdTech (Educational Technology)
+Frontend
+HTTPS (Hypertext Transfer Protocol Secure)
+JWT (JSON Web Token)
+LMS (Learning Management System)
+OOP (Object-Oriented Programming)
+PostgreSQL
+React
+React Native
+SaaS (Software as a Service)
+SQL (Structured Query Language)
+SSL/TLS (Secure Sockets Layer / Transport Layer Security)
+UI (User Interface)
+UX (User Experience)
+VPC (Virtual Private Cloud)
+XSS (Cross-Site Scripting)
+Key Considerations for the LLM:
+The LLM should be able to distinguish between the different user roles and provide role-specific information.
+It should understand the relationships between courses, lessons, assignments, students, and teachers.
+It should be able to answer questions about features, functionality, security, reporting, and future enhancements.
+The LLM should maintain a friendly and helpful tone, suitable for a support chat.
+This knowledge base should provide a good starting point for training your LLM. Remember to augment it with more specific information and examples as needed to improve its accuracy and usefulness.

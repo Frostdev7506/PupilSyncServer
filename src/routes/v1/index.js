@@ -11,6 +11,7 @@ const pollRoutes = require("./pollRoutes");
 const surveyRoutes = require("./surveyRoutes");
 const assignmentRoutes = require("./assignmentRoutes");
 const { db } = require("../../config/db");
+const aiChatRoutes = require("./aiChatRoutes");
 
 // Teacher features
 const teacherProfileRoutes = require("./teacherProfileRoutes");
@@ -53,6 +54,7 @@ router.use("/quizzes", quizRoutes);
 router.use("/polls", pollRoutes);
 router.use("/surveys", surveyRoutes);
 router.use("/assignments", assignmentRoutes);
+router.use("/ai-chat", aiChatRoutes);
 
 // Teacher routes
 router.use("/teacher-profiles", teacherProfileRoutes);

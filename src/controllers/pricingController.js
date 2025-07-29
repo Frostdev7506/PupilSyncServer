@@ -1,20 +1,6 @@
 const { db } = require("../config/db");
 const { Op } = require("sequelize");
 
-// NOW, LOG THE ENTIRE OBJECT AND ITS KEYS TO THE CONSOLE
-console.log("--- DEBUGGING DATABASE EXPORT ---");
-console.log("Is the db object defined?", !!db);
-console.log("What are the keys on the db object?", Object.keys(db));
-console.log("--- END DEBUG ---");
-
-// Then, do the destructuring from the object we just logged
-const { PricingPlan, FAQ } = db;
-
-// Log the variable one more time to be certain
-console.log("Is PricingPlan defined after destructuring?", PricingPlan);
-
-// --- END OF DEBUG CODE ---
-
 /**
  * Get pricing data and FAQs for a specific entity type
  * @param {Object} req - Express request object
